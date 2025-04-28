@@ -5,4 +5,4 @@ pub mod college;
 pub use college::CollegeAccount;
 
 pub mod student;
-pub use student::StudentAccount;
+pub use student::StudentData;

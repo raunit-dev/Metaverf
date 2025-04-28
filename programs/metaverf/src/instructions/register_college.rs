@@ -50,7 +50,7 @@ pub struct RegisterCollege<'info> {
 }
 
 impl<'info> RegisterCollege<'info> {
-    pub fn register_college(&mut self) -> Result<()> {
+    pub fn register_college(&mut self, bumps:&RegisterCollegeBumps) -> Result<()> {
         let college_id = self.metaverf_account.uni_no + 1;
         self.metaverf_account.uni_no = college_id;
 
@@ -59,6 +59,8 @@ impl<'info> RegisterCollege<'info> {
             authority: self.college_authority.key(),
             last_payment: Clock::get()?.unix_timestamp,
             active: true,
+            bump: bumps.college_account
+            
         });
 
         let cpi_program = self.token_program.to_account_info();
