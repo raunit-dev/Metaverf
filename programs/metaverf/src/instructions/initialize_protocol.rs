@@ -10,7 +10,7 @@ pub struct InitializeProtocol<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
 
-    pub mint_usdt: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(
         init,
@@ -47,7 +47,7 @@ impl<'info> InitializeProtocol<'info> {
             uni_no: 0,
             verf_bump: bumps.metaverf_account,
             annual_fee,
-            subscription_duration,
+            // subscription_duration,
         });
 
         Ok(())

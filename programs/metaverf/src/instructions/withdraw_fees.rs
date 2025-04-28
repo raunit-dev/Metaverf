@@ -32,7 +32,7 @@ pub struct WithdrawFees<'info> {
     #[account(
         init_if_needed,
         payer = admin,
-        associated_token::mint = mint_usdt,
+        associated_token::mint = mint_usdc,
         associated_token::authority = admin
     )]
     pub admin_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
@@ -60,7 +60,7 @@ impl<'info> WithdrawFees<'info> {
 
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer);
 
-        transfer_checked(cpi_ctx, amount, self.mint_usdt.decimals)?;
+        transfer_checked(cpi_ctx, amount, self.mint_usdc.decimals)?;
         Ok(())
     }
 }

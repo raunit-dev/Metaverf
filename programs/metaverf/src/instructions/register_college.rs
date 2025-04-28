@@ -11,7 +11,7 @@ use crate::state::{CollegeAccount, MetaverfAccount};
 #[derive(Accounts)]
 pub struct RegisterCollege<'info> {
     pub admin_key: SystemAccount<'info>,
-    pub mint_usdt: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(mut)]
     pub college_authority: Signer<'info>,
@@ -77,7 +77,7 @@ impl<'info> RegisterCollege<'info> {
         transfer_checked(
             cpi_ctx,
             self.metaverf_account.annual_fee,
-            self.mint_usdt.decimals,
+            self.mint_usdc.decimals,
         )?;
         Ok(())
     }
