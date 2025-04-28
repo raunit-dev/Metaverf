@@ -1,11 +1,13 @@
-pub mod initialize_college;
+pub mod mint_certificates;
 pub mod initialize_protocol;
-pub mod initialize_student;
 pub mod register_college;
+pub mod renew_subscription;
+pub mod update_parameter;
 pub mod withdraw_fees;
 
-pub use initialize_college::*;
+pub use mint_certificates::*;
 pub use initialize_protocol::*;
-pub use initialize_student::*;
 pub use register_college::*;
+pub use renew_subscription::*;
+pub use update_parameter::*;
 pub use withdraw_fees::*;
