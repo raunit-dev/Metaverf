@@ -1,10 +1,10 @@
+use crate::state::MetaverfAccount;
 use anchor_lang::prelude::*;
+use anchor_spl::token::{transfer_checked, TransferChecked};
 use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{Mint, TokenAccount, TokenInterface},
 };
-
-use crate::state::MetaverfAccount;
 
 #[derive(Accounts)]
 pub struct WithdrawFees<'info> {
@@ -29,7 +29,6 @@ pub struct WithdrawFees<'info> {
     )]
     pub treasury: Box<InterfaceAccount<'info, TokenAccount>>,
 
-    #[account(mut)]
     pub admin_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
     pub mint_usdt: Box<InterfaceAccount<'info, Mint>>,
@@ -41,7 +40,7 @@ pub struct WithdrawFees<'info> {
 
 impl<'info> WithdrawFees<'info> {
     pub fn withdraw_fees(&mut self, amount: u64) -> Result<()> {
-        let seeds = &[b"protocol", &[self.metaverf_account.verf_bump]];
+        let seeds = &[b"protocol".as_ref(), &[self.metaverf_account.verf_bump]];
         let signer = &[&seeds[..]];
 
         let cpi_program = self.token_program.to_account_info();

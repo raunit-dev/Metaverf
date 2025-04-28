@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 
-#[derive(InitSpace)]
+
 #[account]
+#[derive(InitSpace)]
 pub struct MetaverfAccount {
     pub admin_key: Pubkey,
     pub uni_no: u16,

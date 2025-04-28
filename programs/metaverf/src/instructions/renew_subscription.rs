@@ -4,11 +4,13 @@ use anchor_spl::{
     token_interface::{Mint, TokenAccount, TokenInterface},
 };
 
-use crate::state::{MetaverfAccount, CollegeAccount};
+use anchor_spl::token::{transfer_checked, TransferChecked};
+
+use crate::state::{CollegeAccount, MetaverfAccount};
 
 #[derive(Accounts)]
 pub struct RenewSubscription<'info> {
-    pub admin: Signer<'info>,
+    pub admin_key: SystemAccount<'info>,
     pub mint_usdt: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(mut)]
@@ -50,7 +52,8 @@ pub struct RenewSubscription<'info> {
 impl<'info> RenewSubscription<'info> {
     pub fn renew_subscription(&mut self) -> Result<()> {
         let current_time = Clock::get()?.unix_timestamp;
-        let expiry_time = self.college_account.last_payment + self.metaverf_account.subscription_duration;
+        let _expiry_time =
+            self.college_account.last_payment + self.metaverf_account.subscription_duration;
 
         let cpi_accounts = TransferChecked {
             from: self.payer_token_account.to_account_info(),

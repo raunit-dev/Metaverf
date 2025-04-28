@@ -1,11 +1,16 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token_interface::{Mint, TokenAccount};
+use anchor_spl::{
+    associated_token::AssociatedToken,
+    token_interface::{Mint, TokenAccount, TokenInterface},
+};
+
+use anchor_spl::token::{transfer_checked, TransferChecked};
 
 use crate::state::{CollegeAccount, MetaverfAccount};
 
 #[derive(Accounts)]
 pub struct RegisterCollege<'info> {
-    pub admin: Signer<'info>,
+    pub admin_key: SystemAccount<'info>,
     pub mint_usdt: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(mut)]
@@ -45,7 +50,7 @@ pub struct RegisterCollege<'info> {
 }
 
 impl<'info> RegisterCollege<'info> {
-    pub fn register_college(&mut self, bumps: &RegisterCollegeBumps) -> Result<()> {
+    pub fn register_college(&mut self) -> Result<()> {
         let college_id = self.metaverf_account.uni_no + 1;
         self.metaverf_account.uni_no = college_id;
 
