@@ -10,10 +10,6 @@ use mpl_core::{
 pub struct CertificateArgs {
     pub name: String,
     pub uri: String,
-    pub student_name: String,
-    pub student_id: String,
-    pub program: String,
-    pub year: u16,
 }
 
 #[derive(Accounts)]
@@ -68,10 +64,6 @@ impl<'info> MintCertificates<'info> {
                 plugin: Plugin::PermanentFreezeDelegate(PermanentFreezeDelegate { frozen: true }),
                 authority: None,
             }])
-            .attribute("student_name", args.student_name)
-            .attribute("student_id", args.student_id)
-            .attribute("program", args.student_program)
-            .attribute("year", args.student.year.to_string())
             .invoke()?;
 
         Ok(())
