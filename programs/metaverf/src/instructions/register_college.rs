@@ -67,7 +67,7 @@ impl<'info> RegisterCollege<'info> {
 
         let cpi_accounts = TransferChecked {
             from: self.payer_token_account.to_account_info(),
-            mint: self.mint_usdt.to_account_info(),
+            mint: self.mint_usdc.to_account_info(),
             to: self.treasury.to_account_info(),
             authority: self.college_authority.to_account_info(),
         };

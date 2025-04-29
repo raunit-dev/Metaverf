@@ -11,7 +11,7 @@ use crate::state::{CollegeAccount, MetaverfAccount};
 #[derive(Accounts)]
 pub struct RenewSubscription<'info> {
     pub admin_key: SystemAccount<'info>,
-    pub mint_usdt: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(mut)]
     pub college_authority: Signer<'info>,
@@ -26,7 +26,7 @@ pub struct RenewSubscription<'info> {
 
     #[account(
         mut,
-        associated_token::mint = mint_usdt,
+        associated_token::mint = mint_usdc,
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]
@@ -68,7 +68,7 @@ impl<'info> RenewSubscription<'info> {
         transfer_checked(
             cpi_ctx,
             self.metaverf_account.annual_fee,
-            self.mint_usdt.decimals,
+            self.mint_usdc.decimals,
         )?;
 
         self.college_account.last_payment = current_time;

@@ -47,7 +47,6 @@ impl<'info> InitializeProtocol<'info> {
             uni_no: 0,
             verf_bump: bumps.metaverf_account,
             annual_fee,
-            // subscription_duration,
         });
 
         Ok(())
