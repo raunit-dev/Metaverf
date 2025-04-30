@@ -23,7 +23,7 @@ pub struct WithdrawFees<'info> {
 
     #[account(
         mut,
-        associated_token::mint = mint_usdt,
+        associated_token::mint = mint_usdc,
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]
@@ -38,7 +38,7 @@ pub struct WithdrawFees<'info> {
     )]
     pub admin_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
-    pub mint_usdt: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
@@ -54,7 +54,7 @@ impl<'info> WithdrawFees<'info> {
 
         let cpi_accounts = TransferChecked {
             from: self.treasury.to_account_info(),
-            mint: self.mint_usdt.to_account_info(),
+            mint: self.mint_usdc.to_account_info(),
             to: self.admin_token_account.to_account_info(),
             authority: self.metaverf_account.to_account_info(),
         };
@@ -64,4 +64,4 @@ impl<'info> WithdrawFees<'info> {
         transfer_checked(cpi_ctx, amount, self.mint_usdc.decimals)?;
         Ok(())
     }
-}
+} 
