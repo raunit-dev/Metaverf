@@ -14,7 +14,7 @@ pub struct RenewSubscription<'info> {
     pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
 
     #[account(mut)]
-    pub college_authority: Signer<'info>,
+    pub college_authority: SystemAccount<'info>,
 
     #[account(
         mut,
@@ -57,7 +57,7 @@ impl<'info> RenewSubscription<'info> {
 
         let cpi_accounts = TransferChecked {
             from: self.payer_token_account.to_account_info(),
-            mint: self.mint_usdt.to_account_info(),
+            mint: self.mint_usdc.to_account_info(),
             to: self.treasury.to_account_info(),
             authority: self.college_authority.to_account_info(),
         };

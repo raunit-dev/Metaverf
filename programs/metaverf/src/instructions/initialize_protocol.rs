@@ -24,7 +24,7 @@ pub struct InitializeProtocol<'info> {
     #[account(
         init,
         payer = admin,
-        associated_token::mint = mint_usdt,
+        associated_token::mint = mint_usdc,
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]
@@ -39,12 +39,13 @@ impl<'info> InitializeProtocol<'info> {
     pub fn initialize_protocol(
         &mut self,
         annual_fee: u64,
-        subscription_duration: i64,
+        subscription_duration: u64,
         bumps: &InitializeProtocolBumps,
     ) -> Result<()> {
         self.metaverf_account.set_inner(MetaverfAccount {
             admin_key: self.admin.key(),
             uni_no: 0,
+            subscription_duration,
             verf_bump: bumps.metaverf_account,
             annual_fee,
         });

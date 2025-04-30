@@ -26,7 +26,7 @@ pub struct RegisterCollege<'info> {
 
     #[account(
         mut,
-        associated_token::mint = mint_usdt,
+        associated_token::mint = mint_usdc,
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]

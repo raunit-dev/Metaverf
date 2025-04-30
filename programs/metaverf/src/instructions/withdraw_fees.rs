@@ -30,10 +30,11 @@ pub struct WithdrawFees<'info> {
     pub treasury: Box<InterfaceAccount<'info, TokenAccount>>,
 
     #[account(
-        init_if_needed,
+        init,
         payer = admin,
         associated_token::mint = mint_usdc,
-        associated_token::authority = admin
+        associated_token::authority = admin,
+        associated_token::token_program = token_program
     )]
     pub admin_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
 
