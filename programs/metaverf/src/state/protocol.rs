@@ -8,5 +8,5 @@ pub struct MetaverfAccount {
     pub uni_no: u16,
     pub annual_fee: u64,
     pub verf_bump: u8,
-    pub subscription_duration: u64
+    pub subscription_duration: i64
 }

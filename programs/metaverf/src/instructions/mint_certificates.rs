@@ -1,3 +1,5 @@
+
+
 use anchor_lang::prelude::*;
 use mpl_core::{
     accounts::BaseCollectionV1,
@@ -8,13 +10,6 @@ use mpl_core::{
 
 use crate::state::{CollegeAccount, MetaverfAccount};
 
-// #[derive(AnchorSerialize, AnchorDeserialize)]
-pub struct CertificateArgs {
-    // #[max_len(10)]
-    pub name: String,
-    // #[max_len(10)]
-    pub uri: String,
-}
 
 #[derive(Accounts)]
 pub struct MintCertificates<'info> {

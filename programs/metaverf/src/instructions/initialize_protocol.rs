@@ -39,7 +39,7 @@ impl<'info> InitializeProtocol<'info> {
     pub fn initialize_protocol(
         &mut self,
         annual_fee: u64,
-        subscription_duration: u64,
+        subscription_duration: i64,
         bumps: &InitializeProtocolBumps,
     ) -> Result<()> {
         self.metaverf_account.set_inner(MetaverfAccount {
