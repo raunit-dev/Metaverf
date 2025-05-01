@@ -48,7 +48,7 @@ pub struct MintCertificates<'info> {
 }
 
 impl<'info> MintCertificates<'info> {
-    pub fn mint_core_asset(&mut self, args: CertificateArgs) -> Result<()> {
+    pub fn mint_certificates(&mut self, args: CertificateArgs) -> Result<()> {
         CreateV1CpiBuilder::new(&self.mpl_core_program.to_account_info())
             .asset(&self.asset.to_account_info())
             .collection(Some(&self.collection.to_account_info()))
