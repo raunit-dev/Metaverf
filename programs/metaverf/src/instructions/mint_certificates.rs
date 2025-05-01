@@ -1,5 +1,3 @@
-
-
 use anchor_lang::prelude::*;
 use mpl_core::{
     accounts::BaseCollectionV1,
@@ -10,9 +8,8 @@ use mpl_core::{
 
 use crate::state::{CollegeAccount, MetaverfAccount};
 
-
 #[derive(Accounts)]
-pub struct MintCertificates<'info> {
+pub struct MintCertificate<'info> {
     #[account(mut)]
     pub college: Signer<'info>,
 
@@ -32,8 +29,12 @@ pub struct MintCertificates<'info> {
     )]
     pub college_account: Account<'info, CollegeAccount>,
 
-    #[account(mut)]
-    pub collection: Account<'info, BaseCollectionV1>,
+    #[account(
+        mut,
+        constraint = college_account.collections.iter().any(|c| c.collection == collection.key()) @ ErrorCode::InvalidCollection,
+        constraint = college_account.update_authority == college.key() @ ErrorCode::NotCollectionAuthority
+    )]
+    pub collection: UncheckedAccount<'info>,
 
     #[account(mut)]
     pub asset: Signer<'info>,
@@ -46,7 +47,7 @@ pub struct MintCertificates<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> MintCertificates<'info> {
+impl<'info> MintCertificate<'info> {
     pub fn mint_certificates(&mut self, args: CertificateArgs) -> Result<()> {
         CreateV1CpiBuilder::new(&self.mpl_core_program.to_account_info())
             .asset(&self.asset.to_account_info())
@@ -75,4 +76,8 @@ pub enum ErrorCode {
     NotCollegeAuthority,
     #[msg("Subscription has expired")]
     SubscriptionExpired,
+    #[msg("Invalid collection")]
+    InvalidCollection,
+    #[msg("Not authorized to update collection")]
+    NotCollectionAuthority,
 }

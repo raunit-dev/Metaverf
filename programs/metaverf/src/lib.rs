@@ -11,13 +11,18 @@ pub use state::*;
 
 declare_id!("EaWRVXxw9uKq5ydVwqLYdmfY3gzSdRCqumRHrCFet5Rz");
 
+#[derive(AnchorSerialize, AnchorDeserialize)]
+pub struct CertificateArgs {
+    pub name: String,
+    pub uri: String,
+}
 
 #[program]
 pub mod metaverf {
     use super::*;
 
-    pub fn initialize(ctx: Context<InitializeProtocol>,annual_fee: u64,subscription_duration:i64,) -> Result<()> {
-        ctx.accounts.initialize_protocol(annual_fee,subscription_duration,&ctx.bumps)
+    pub fn initialize(ctx: Context<InitializeProtocol>, annual_fee: u64, subscription_duration: i64) -> Result<()> {
+        ctx.accounts.initialize_protocol(annual_fee, subscription_duration, &ctx.bumps)
     }
 
     pub fn register_college(ctx: Context<RegisterCollege>) -> Result<()> {
@@ -28,17 +33,19 @@ pub mod metaverf {
         ctx.accounts.renew_subscription()
     }
 
-    pub fn update_parameters(ctx: Context<UpdateParameter>,annual_fee: Option<u64>,subscription_duration:Option<i64>) -> Result<()> {
-        ctx.accounts.update_parameters(annual_fee,subscription_duration)
+    pub fn update_parameters(ctx: Context<UpdateParameter>, annual_fee: Option<u64>, subscription_duration: Option<i64>) -> Result<()> {
+        ctx.accounts.update_parameters(annual_fee, subscription_duration)
     }
 
-    pub fn withdraw_fees(ctx: Context<WithdrawFees>,amount: u64) -> Result<()> {
+    pub fn withdraw_fees(ctx: Context<WithdrawFees>, amount: u64) -> Result<()> {
         ctx.accounts.withdraw_fees(amount)
     }
 
-    pub fn mint_certificates(ctx: Context<MintCertificate>) -> Result<()> {
-        ctx.accounts.mint_certificates(args)
+    pub fn add_collection(ctx: Context<AddCollection>, name: String, uri: String) -> Result<()> {
+        ctx.accounts.add_collection(AddCollectionArgs { name, uri }, &ctx.bumps)
     }
 
-
+    pub fn mint_certificates(ctx: Context<MintCertificate>, name: String, uri: String) -> Result<()> {
+        ctx.accounts.mint_certificates(CertificateArgs { name, uri })
+    }
 }
