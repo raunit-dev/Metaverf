@@ -4,5 +4,5 @@ pub use protocol::MetaverfAccount;
 pub mod college;
 pub use college::CollegeAccount;
 
-pub mod student;
-pub use student::StudentData;
+// pub mod student;
+// pub use student::StudentData;

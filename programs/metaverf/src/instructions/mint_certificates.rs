@@ -6,9 +6,13 @@ use mpl_core::{
     ID as MPL_CORE_ID,
 };
 
+use crate::state::{CollegeAccount, MetaverfAccount};
+
 // #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct CertificateArgs {
+    // #[max_len(10)]
     pub name: String,
+    // #[max_len(10)]
     pub uri: String,
 }
 
@@ -22,7 +26,7 @@ pub struct MintCertificates<'info> {
         seeds = [b"protocol"],
         bump = metaverf_account.verf_bump,
     )]
-    pub metaverf_account: Box<Account<'info, MetaverfAccount>>,
+    pub metaverf_account: Account<'info, MetaverfAccount>,
 
     #[account(
         mut,
@@ -31,10 +35,10 @@ pub struct MintCertificates<'info> {
         constraint = college_account.authority == college.key() @ ErrorCode::NotCollegeAuthority,
         constraint = college_account.active @ ErrorCode::SubscriptionExpired,
     )]
-    pub college_account: Box<Account<'info, CollegeAccount>>,
+    pub college_account: Account<'info, CollegeAccount>,
 
     #[account(mut)]
-    pub collection: Box<Account<'info, BaseCollectionV1>>,
+    pub collection: Account<'info, BaseCollectionV1>,
 
     #[account(mut)]
     pub asset: Signer<'info>,
