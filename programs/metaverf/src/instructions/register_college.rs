@@ -13,6 +13,7 @@ pub struct RegisterCollege<'info> {
     pub admin_key: SystemAccount<'info>,
     pub mint_usdc: InterfaceAccount<'info, Mint>,
 
+    //The Payer For Everything on the behalf of the college (not for the college)
     #[account(mut)]
     pub college_authority: Signer<'info>,
 
@@ -43,6 +44,7 @@ pub struct RegisterCollege<'info> {
 
     #[account(mut)]
     pub payer_token_account: InterfaceAccount<'info, TokenAccount>,
+    //The payer who Payes on the Behalf of the College(The Payer for the College)
 
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
@@ -59,7 +61,11 @@ impl<'info> RegisterCollege<'info> {
             authority: self.college_authority.key(),
             last_payment: Clock::get()?.unix_timestamp,
             active: true,
-            bump: bumps.college_account,
+            bump: bumps.college_account, //TODO
+            collection,
+            collection_bump,
+            update_authority
+            
         });
 
         let cpi_program = self.token_program.to_account_info();
