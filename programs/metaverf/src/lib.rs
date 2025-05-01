@@ -45,7 +45,7 @@ pub mod metaverf {
         ctx.accounts.add_collection(AddCollectionArgs { name, uri }, &ctx.bumps)
     }
 
-    pub fn mint_certificates(ctx: Context<MintCertificate>, name: String, uri: String) -> Result<()> {
+    pub fn mint_certificates(ctx: Context<MintCertificates>, name: String, uri: String) -> Result<()> {
         ctx.accounts.mint_certificates(CertificateArgs { name, uri })
     }
 }

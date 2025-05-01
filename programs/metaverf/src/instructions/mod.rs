@@ -4,7 +4,7 @@ pub mod register_college;
 pub mod renew_subscription;
 pub mod update_parameter;
 pub mod withdraw_fees;
-pub mod initialize_collection;
+pub mod add_collection;
 
 pub use mint_certificates::*;
 pub use initialize_protocol::*;
@@ -12,4 +12,4 @@ pub use register_college::*;
 pub use renew_subscription::*;
 pub use update_parameter::*;
 pub use withdraw_fees::*;
-pub use initialize_collection::*;
+pub use add_collection::*;

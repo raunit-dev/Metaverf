@@ -1,8 +1,6 @@
 use anchor_lang::prelude::*;
 use mpl_core::{
-    accounts::BaseCollectionV1,
-    instructions::CreateV1CpiBuilder,
-    types::{DataState, Plugin, PluginAuthority, PluginAuthorityPair},
+    instructions::CreateCollectionV2CpiBuilder,
     ID as MPL_CORE_ID,
 };
 
@@ -25,7 +23,7 @@ pub struct AddCollection<'info> {
     #[account(
         init,
         payer = college,
-        space = BaseCollectionV1::INIT_SPACE
+        space = 8 + 32 + 32 + 32 + 32 // discriminator + key + update_authority + name + uri
     )]
     pub new_collection: UncheckedAccount<'info>,
 
@@ -42,16 +40,13 @@ pub struct AddCollectionArgs {
 }
 
 impl<'info> AddCollection<'info> {
-    pub fn add_collection(&mut self, args: AddCollectionArgs, bumps: &AddCollectionBumps) -> Result<()> {
+    pub fn add_collection(&mut self, args: AddCollectionArgs, _bumps: &AddCollectionBumps) -> Result<()> {
         // Create the new collection with college as owner and update authority
-        CreateV1CpiBuilder::new(&self.mpl_core_program.to_account_info())
-            .asset(&self.new_collection.to_account_info())
-            .authority(Some(&self.college.to_account_info()))
+        CreateCollectionV2CpiBuilder::new(&self.mpl_core_program.to_account_info())
+            .collection(&self.new_collection.to_account_info())
             .payer(&self.college.to_account_info())
-            .owner(Some(&self.college.to_account_info()))
             .update_authority(Some(&self.college.to_account_info()))
             .system_program(&self.system_program.to_account_info())
-            .data_state(DataState::AccountState)
             .name(args.name.clone())
             .uri(args.uri.clone())
             .invoke()?;
@@ -59,7 +54,7 @@ impl<'info> AddCollection<'info> {
         // Add the new collection to the college's collections
         self.college_account.collections.push(CollectionInfo {
             collection: self.new_collection.key(),
-            bump: bumps.new_collection,
+            bump: 0, // We don't need the bump for collections
             name: args.name,
             uri: args.uri,
         });

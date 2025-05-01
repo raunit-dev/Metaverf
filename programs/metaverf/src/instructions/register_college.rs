@@ -4,9 +4,8 @@ use anchor_spl::{
     token_interface::{Mint, TokenAccount, TokenInterface},
 };
 use mpl_core::{
-    accounts::BaseCollectionV1,
     instructions::CreateV1CpiBuilder,
-    types::{DataState, Plugin, PluginAuthority, PluginAuthorityPair},
+    types::DataState,
     ID as MPL_CORE_ID,
 };
 
@@ -55,7 +54,7 @@ pub struct RegisterCollege<'info> {
     #[account(
         init,
         payer = college_authority,
-        space = BaseCollectionV1::INIT_SPACE
+        space = 8 + 32 + 32 + 32 + 32 // discriminator + key + update_authority + name + uri
     )]
     pub collection: UncheckedAccount<'info>,
 
@@ -82,7 +81,7 @@ impl<'info> RegisterCollege<'info> {
             .system_program(&self.system_program.to_account_info())
             .data_state(DataState::AccountState)
             .name(format!("College {} Collection", college_id))
-            .uri("https://example.com/collection") // You might want to make this configurable
+            .uri(format!("https://example.com/collection")) // You might want to make this configurable
             .invoke()?;
 
         // Initialize the college account with the first collection
@@ -95,7 +94,7 @@ impl<'info> RegisterCollege<'info> {
             update_authority: self.college_authority.key(),
             collections: vec![CollectionInfo {
                 collection: self.collection.key(),
-                bump: bumps.collection,
+                bump: 0, // We don't need the bump for collections
                 name: format!("College {} Collection", college_id),
                 uri: "https://example.com/collection".to_string(),
             }],

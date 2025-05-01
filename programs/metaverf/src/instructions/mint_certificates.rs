@@ -1,15 +1,15 @@
 use anchor_lang::prelude::*;
 use mpl_core::{
-    accounts::BaseCollectionV1,
     instructions::CreateV1CpiBuilder,
-    types::{DataState, PermanentFreezeDelegate, Plugin, PluginAuthority, PluginAuthorityPair},
+    types::{DataState, PermanentFreezeDelegate, Plugin, PluginAuthorityPair},
     ID as MPL_CORE_ID,
 };
 
 use crate::state::{CollegeAccount, MetaverfAccount};
+use crate::CertificateArgs;
 
 #[derive(Accounts)]
-pub struct MintCertificate<'info> {
+pub struct MintCertificates<'info> {
     #[account(mut)]
     pub college: Signer<'info>,
 
@@ -47,7 +47,7 @@ pub struct MintCertificate<'info> {
     pub system_program: Program<'info, System>,
 }
 
-impl<'info> MintCertificate<'info> {
+impl<'info> MintCertificates<'info> {
     pub fn mint_certificates(&mut self, args: CertificateArgs) -> Result<()> {
         CreateV1CpiBuilder::new(&self.mpl_core_program.to_account_info())
             .asset(&self.asset.to_account_info())
