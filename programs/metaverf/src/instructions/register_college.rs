@@ -11,7 +11,7 @@ use crate::state::{CollegeAccount, MetaverfAccount};
 #[derive(Accounts)]
 pub struct RegisterCollege<'info> {
     pub admin_key: SystemAccount<'info>,
-    pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_usdc: InterfaceAccount<'info, Mint>,
 
     #[account(mut)]
     pub college_authority: Signer<'info>,
@@ -22,7 +22,7 @@ pub struct RegisterCollege<'info> {
         bump = metaverf_account.verf_bump,
         has_one = admin_key
     )]
-    pub metaverf_account: Box<Account<'info, MetaverfAccount>>,
+    pub metaverf_account: Account<'info, MetaverfAccount>,
 
     #[account(
         mut,
@@ -30,7 +30,7 @@ pub struct RegisterCollege<'info> {
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]
-    pub treasury: Box<InterfaceAccount<'info, TokenAccount>>,
+    pub treasury: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         init,
@@ -39,10 +39,10 @@ pub struct RegisterCollege<'info> {
         bump,
         space = 8 + CollegeAccount::INIT_SPACE
     )]
-    pub college_account: Box<Account<'info, CollegeAccount>>,
+    pub college_account: Account<'info, CollegeAccount>,
 
     #[account(mut)]
-    pub payer_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
+    pub payer_token_account: InterfaceAccount<'info, TokenAccount>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
@@ -50,7 +50,7 @@ pub struct RegisterCollege<'info> {
 }
 
 impl<'info> RegisterCollege<'info> {
-    pub fn register_college(&mut self, bumps:&RegisterCollegeBumps) -> Result<()> {
+    pub fn register_college(&mut self, bumps: &RegisterCollegeBumps) -> Result<()> {
         let college_id = self.metaverf_account.uni_no + 1;
         self.metaverf_account.uni_no = college_id;
 
@@ -59,8 +59,7 @@ impl<'info> RegisterCollege<'info> {
             authority: self.college_authority.key(),
             last_payment: Clock::get()?.unix_timestamp,
             active: true,
-            bump: bumps.college_account
-            
+            bump: bumps.college_account,
         });
 
         let cpi_program = self.token_program.to_account_info();

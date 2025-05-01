@@ -14,7 +14,7 @@ pub struct UpdateParameter<'info> {
         seeds = [b"protocol"],
         bump = metaverf_account.verf_bump
     )]
-    pub metaverf_account: Box<Account<'info, MetaverfAccount>>,
+    pub metaverf_account: Account<'info, MetaverfAccount>,
 }
 
 impl<'info> UpdateParameter<'info> {

@@ -10,7 +10,7 @@ pub struct InitializeProtocol<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
 
-    pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_usdc: InterfaceAccount<'info, Mint>,
 
     #[account(
         init,
@@ -19,7 +19,7 @@ pub struct InitializeProtocol<'info> {
         bump,
         space = 8 + MetaverfAccount::INIT_SPACE,
     )]
-    pub metaverf_account: Box<Account<'info, MetaverfAccount>>,
+    pub metaverf_account: Account<'info, MetaverfAccount>,
 
     #[account(
         init,
@@ -28,7 +28,7 @@ pub struct InitializeProtocol<'info> {
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]
-    pub treasury: Box<InterfaceAccount<'info, TokenAccount>>,
+    pub treasury: InterfaceAccount<'info, TokenAccount>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,

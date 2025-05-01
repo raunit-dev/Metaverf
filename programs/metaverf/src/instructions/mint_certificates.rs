@@ -6,7 +6,7 @@ use mpl_core::{
     ID as MPL_CORE_ID,
 };
 
-#[derive(AnchorSerialize, AnchorDeserialize)]
+// #[derive(AnchorSerialize, AnchorDeserialize)]
 pub struct CertificateArgs {
     pub name: String,
     pub uri: String,

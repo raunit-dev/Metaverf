@@ -19,7 +19,7 @@ pub struct WithdrawFees<'info> {
         seeds = [b"protocol"],
         bump = metaverf_account.verf_bump
     )]
-    pub metaverf_account: Box<Account<'info, MetaverfAccount>>,
+    pub metaverf_account: Account<'info, MetaverfAccount>,
 
     #[account(
         mut,
@@ -27,7 +27,7 @@ pub struct WithdrawFees<'info> {
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]
-    pub treasury: Box<InterfaceAccount<'info, TokenAccount>>,
+    pub treasury: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         init,
@@ -36,9 +36,9 @@ pub struct WithdrawFees<'info> {
         associated_token::authority = admin,
         associated_token::token_program = token_program
     )]
-    pub admin_token_account: Box<InterfaceAccount<'info, TokenAccount>>,
+    pub admin_token_account: InterfaceAccount<'info, TokenAccount>,
 
-    pub mint_usdc: Box<InterfaceAccount<'info, Mint>>,
+    pub mint_usdc: InterfaceAccount<'info, Mint>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
@@ -64,4 +64,4 @@ impl<'info> WithdrawFees<'info> {
         transfer_checked(cpi_ctx, amount, self.mint_usdc.decimals)?;
         Ok(())
     }
-} 
+}
