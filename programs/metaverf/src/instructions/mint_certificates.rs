@@ -25,15 +25,15 @@ pub struct MintCertificates<'info> {
         mut,
         seeds = [b"college", college_account.id.to_le_bytes().as_ref()],
         bump = college_account.bump,
-        constraint = college_account.authority == college.key() @ ErrorCode::NotCollegeAuthority,
-        constraint = college_account.active @ ErrorCode::SubscriptionExpired,
+        constraint = college_account.authority == college.key(),
+        constraint = college_account.active,
     )]
     pub college_account: Account<'info, CollegeAccount>,
 
     #[account(
         mut,
-        constraint = college_account.collections.iter().any(|c| c.collection == collection.key()) @ ErrorCode::InvalidCollection,
-        constraint = college_account.update_authority == college.key() @ ErrorCode::NotCollectionAuthority
+        constraint = college_account.collections.iter().any(|c| c.collection == collection.key()) ,
+        constraint = college_account.update_authority == college.key() 
     )]
     pub collection: UncheckedAccount<'info>,
 
@@ -71,14 +71,4 @@ impl<'info> MintCertificates<'info> {
     }
 }
 
-#[error_code]
-pub enum ErrorCode {
-    #[msg("Only the college authority can perform this action")]
-    NotCollegeAuthority,
-    #[msg("Subscription has expired")]
-    SubscriptionExpired,
-    #[msg("Invalid collection")]
-    InvalidCollection,
-    #[msg("Not authorized to update collection")]
-    NotCollectionAuthority,
-}
+

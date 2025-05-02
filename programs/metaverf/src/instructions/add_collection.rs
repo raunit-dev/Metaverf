@@ -16,8 +16,8 @@ pub struct AddCollection<'info> {
         mut,
         seeds = [b"college", college_account.id.to_le_bytes().as_ref()],
         bump = college_account.bump,
-        constraint = college_account.authority == college.key() @ ErrorCode::NotCollegeAuthority,
-        constraint = college_account.active @ ErrorCode::SubscriptionExpired,
+        constraint = college_account.authority == college.key(),
+        constraint = college_account.active,
     )]
     pub college_account: Account<'info, CollegeAccount>,
 
@@ -64,10 +64,3 @@ impl<'info> AddCollection<'info> {
     }
 }
 
-#[error_code]
-pub enum ErrorCode {
-    #[msg("Only the college authority can perform this action")]
-    NotCollegeAuthority,
-    #[msg("Subscription has expired")]
-    SubscriptionExpired,
-} 
