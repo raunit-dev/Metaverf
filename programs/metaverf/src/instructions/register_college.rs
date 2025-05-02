@@ -16,12 +16,12 @@ use crate::state::{CollegeAccount, MetaverfAccount, CollectionInfo};
 
 #[derive(Accounts)]
 pub struct RegisterCollege<'info> {
-    pub admin_key: SystemAccount<'info>,
-    pub mint_usdc: InterfaceAccount<'info, Mint>,
+    pub admin_key: SystemAccount<'info>, //The admin of the protocol
+    pub mint_usdc: InterfaceAccount<'info, Mint>,//The stablecoin in which we are going to take the fees
 
     //The Payer For Everything on the behalf of the college (not for the college)
     #[account(mut)]
-    pub college_authority: Signer<'info>,
+    pub college_authority: Signer<'info>,//The authority of the college
 
     #[account(
         mut,
@@ -57,7 +57,7 @@ pub struct RegisterCollege<'info> {
         payer = college_authority,
         space = 8 + 32 + 32 + 32 + 32 // discriminator + key + update_authority + name + uri
     )]
-    pub collection: UncheckedAccount<'info>,
+    pub collection: UncheckedAccount<'info>,//The collection its an uncheckedAccount cause its not passed 
 
     #[account(address = MPL_CORE_ID)]
     pub mpl_core_program: UncheckedAccount<'info>,
@@ -95,7 +95,7 @@ impl<'info> RegisterCollege<'info> {
             update_authority: self.college_authority.key(),
             collections: vec![CollectionInfo {
                 collection: self.collection.key(),
-                bump: 0, // We don't need the bump for collections
+                bump: 0, // I don't need the bump for collections
                 name: format!("College {} Collection", college_id),
                 uri: "https://example.com/collection".to_string(),
             }],
@@ -110,7 +110,7 @@ impl<'info> RegisterCollege<'info> {
             authority: self.college_authority.to_account_info(),
         };
 
-        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts);
+        let cpi_ctx = CpiContext::new(cpi_program, cpi_accounts); //transferring the annual fee to the protocol
 
         transfer_checked(
             cpi_ctx,

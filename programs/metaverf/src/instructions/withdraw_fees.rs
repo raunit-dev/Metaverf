@@ -62,7 +62,7 @@ impl<'info> WithdrawFees<'info> {
 
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer);
 
-        transfer_checked(cpi_ctx, amount, self.mint_usdc.decimals)?;
+        transfer_checked(cpi_ctx, amount, self.mint_usdc.decimals)?;//withdrawing the entire amount of stablecoins stored in my treasury 
         Ok(())
     }
 }

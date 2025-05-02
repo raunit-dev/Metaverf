@@ -9,9 +9,9 @@ use anchor_spl::{
 #[derive(Accounts)]
 pub struct InitializeProtocol<'info> {
     #[account(mut)]
-    pub admin: Signer<'info>,
+    pub admin: Signer<'info>,//The admin of the Protocol
 
-    pub mint_usdc: InterfaceAccount<'info, Mint>,
+    pub mint_usdc: InterfaceAccount<'info, Mint>,//The StableCoin we are taking on our protocol currently
 
     #[account(
         init,
@@ -20,7 +20,7 @@ pub struct InitializeProtocol<'info> {
         bump,
         space = 8 + MetaverfAccount::INIT_SPACE,
     )]
-    pub metaverf_account: Account<'info, MetaverfAccount>,
+    pub metaverf_account: Account<'info, MetaverfAccount>,//The protocol Struct initialize
 
     #[account(
         init,
@@ -29,7 +29,7 @@ pub struct InitializeProtocol<'info> {
         associated_token::authority = metaverf_account,
         associated_token::token_program = token_program
     )]
-    pub treasury: InterfaceAccount<'info, TokenAccount>,
+    pub treasury: InterfaceAccount<'info, TokenAccount>,//The Treasury of the Protocol where all the Money will get stored
 
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
@@ -39,8 +39,8 @@ pub struct InitializeProtocol<'info> {
 impl<'info> InitializeProtocol<'info> {
     pub fn initialize_protocol(
         &mut self,
-        annual_fee: u64,
-        subscription_duration: i64,
+        annual_fee: u64,//the price of listing your college in my protocol
+        subscription_duration: i64,//for how much time 
         bumps: &InitializeProtocolBumps,
     ) -> Result<()> {
         self.metaverf_account.set_inner(MetaverfAccount {
