@@ -51,6 +51,11 @@ pub struct RegisterCollege<'info> {
     pub payer_token_account: InterfaceAccount<'info, TokenAccount>,
     //The payer who Payes on the Behalf of the College(The Payer for the College)
  
+    // init,
+    // payer = admin,
+    // associated_token::mint = mint_usdc,
+    // associated_token::authority = college_account,
+    // associated_token::token_program = token_program
 
     #[account(
         init,
