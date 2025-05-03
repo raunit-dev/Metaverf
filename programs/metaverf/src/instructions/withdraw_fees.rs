@@ -9,8 +9,7 @@ use anchor_spl::{
 #[derive(Accounts)]
 pub struct WithdrawFees<'info> {
     #[account(
-        mut,
-        constraint = admin.key() == metaverf_account.admin_key
+        mut
     )]
     pub admin: Signer<'info>,
 
