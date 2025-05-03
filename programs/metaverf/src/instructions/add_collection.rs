@@ -1,4 +1,3 @@
-#![allow(unexpected_cfgs)]
 use anchor_lang::prelude::*;
 use mpl_core::{
     instructions::CreateCollectionV2CpiBuilder,
@@ -21,14 +20,17 @@ pub struct AddCollection<'info> {
     )]
     pub college_account: Account<'info, CollegeAccount>,
 
+    
     #[account(
         init,
         payer = college,
         space = 8 + 32 + 32 + 32 + 32 // discriminator + key + update_authority + name + uri
-    )]
+    )] 
+    ///CHECK: UnchecheckdAccount will be checked by mpl
     pub new_collection: UncheckedAccount<'info>,
 
-    #[account(address = MPL_CORE_ID)]
+    #[account(address = MPL_CORE_ID)] 
+    ///CHECK: UnchecheckdAccount will be checked by mpl
     pub mpl_core_program: UncheckedAccount<'info>,
 
     pub system_program: Program<'info, System>,

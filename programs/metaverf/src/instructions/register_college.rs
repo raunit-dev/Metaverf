@@ -1,4 +1,3 @@
-#![allow(unexpected_cfgs)]
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
@@ -51,15 +50,18 @@ pub struct RegisterCollege<'info> {
     #[account(mut)]
     pub payer_token_account: InterfaceAccount<'info, TokenAccount>,
     //The payer who Payes on the Behalf of the College(The Payer for the College)
+ 
 
     #[account(
         init,
         payer = college_authority,
         space = 8 + 32 + 32 + 32 + 32 // discriminator + key + update_authority + name + uri
-    )]
+    )] 
+    ///CHECK: UnchecheckdAccount will be checked by mpl
     pub collection: UncheckedAccount<'info>,//The collection its an uncheckedAccount cause its not passed 
 
-    #[account(address = MPL_CORE_ID)]
+    #[account(address = MPL_CORE_ID)] 
+    ///CHECK: UnchecheckdAccount will be checked by mpl
     pub mpl_core_program: UncheckedAccount<'info>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,

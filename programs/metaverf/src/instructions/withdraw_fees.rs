@@ -1,4 +1,3 @@
-#![allow(unexpected_cfgs)]
 use crate::state::MetaverfAccount;
 use anchor_lang::prelude::*;
 use anchor_spl::token::{transfer_checked, TransferChecked};
