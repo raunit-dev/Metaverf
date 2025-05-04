@@ -3,10 +3,7 @@ use crate::state::MetaverfAccount;
 
 #[derive(Accounts)]
 pub struct UpdateParameter<'info> {
-    #[account(
-        mut,
-        constraint = admin.key() == metaverf_account.admin_key
-    )]
+    #[account(mut)]
     pub admin: Signer<'info>,
 
     #[account(

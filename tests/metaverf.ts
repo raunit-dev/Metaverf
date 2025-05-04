@@ -144,7 +144,7 @@ describe("metaverf", () => {
     const metaverfInfo = await program.account.metaverfAccount.fetch(
       metaverfAccount
     );
-    const collegeId = metaverfInfo.uniNo + 1;
+    const collegeId = metaverfInfo.uniNo;
 
     const [collegeAccount, collegeBump] = PublicKey.findProgramAddressSync(
       [Buffer.from("college"), new BN(collegeId).toArrayLike(Buffer, "le", 8)],
@@ -154,19 +154,20 @@ describe("metaverf", () => {
     const tx = await program.methods
       .registerCollege()
       .accountsPartial({
-        adminKey: admin.publicKey,
+        admin: admin.publicKey,
         mintUsdc: mintUsdc,
         collegeAccount: collegeAccount,
         collection: collection.publicKey,
         collegeAuthority: collegeAuthority.publicKey,
         metaverfAccount: metaverfAccount,
         treasury: treasury,
+        payerTokenAccount: payerTokenAccount,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         tokenProgram: tokenProgram,
         mplCoreProgram: MPL_CORE_PROGRAM_ID,
         systemProgram: SystemProgram.programId,
       })
-      .signers([collegeAuthority])
+      .signers([admin, collegeAuthority, collection])
       .rpc()
       .then(confirm)
       .then(log);

@@ -15,7 +15,8 @@ use crate::state::{CollegeAccount, MetaverfAccount, CollectionInfo};
 
 #[derive(Accounts)]
 pub struct RegisterCollege<'info> {
-    pub admin_key: SystemAccount<'info>, //The admin of the protocol
+    #[account(mut)]
+    pub admin: Signer<'info>, //The admin of the protocol
     pub mint_usdc: InterfaceAccount<'info, Mint>,//The stablecoin in which we are going to take the fees
 
     //The Payer For Everything on the behalf of the college (not for the college)
@@ -25,8 +26,7 @@ pub struct RegisterCollege<'info> {
     #[account(
         mut,
         seeds = [b"protocol"],
-        bump = metaverf_account.verf_bump,
-        has_one = admin_key
+        bump = metaverf_account.verf_bump
     )]
     pub metaverf_account: Account<'info, MetaverfAccount>,
 

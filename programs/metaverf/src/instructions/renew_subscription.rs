@@ -19,8 +19,8 @@ pub struct RenewSubscription<'info> {
     #[account(
         mut,
         seeds = [b"protocol"],
-        bump = metaverf_account.verf_bump,
-        has_one = admin_key
+        bump = metaverf_account.verf_bump
+        // has_one = admin_key
     )]
     pub metaverf_account: Account<'info, MetaverfAccount>,
 

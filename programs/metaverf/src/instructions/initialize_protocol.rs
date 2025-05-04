@@ -43,7 +43,7 @@ impl<'info> InitializeProtocol<'info> {
         bumps: &InitializeProtocolBumps,
     ) -> Result<()> {
         self.metaverf_account.set_inner(MetaverfAccount {
-            admin_key: self.admin.key(),
+            // admin_key: self.admin.key(),
             uni_no: 0,
             subscription_duration,
             verf_bump: bumps.metaverf_account,
