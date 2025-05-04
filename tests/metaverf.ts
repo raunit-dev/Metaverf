@@ -16,6 +16,7 @@ import {
   getAssociatedTokenAddressSync,
   getMinimumBalanceForRentExemptMint,
   ASSOCIATED_TOKEN_PROGRAM_ID,
+  mintTo,
 } from "@solana/spl-token";
 import {
     MPL_CORE_PROGRAM_ID,
@@ -135,12 +136,21 @@ describe("metaverf", () => {
       tokenProgram
     );
 
+    mintTo(
+      provider.connection,
+      collegeAuthority,
+      mintUsdc,
+      payerTokenAccount,
+      collegeAuthority,
+      1_000_000,
+    )
+
     // Initialize the collection account
     collection = Keypair.generate();
     const airdropIx = anchor.web3.SystemProgram.transfer({
       fromPubkey: provider.wallet.publicKey,
       toPubkey: collection.publicKey,
-      lamports: 1 * LAMPORTS_PER_SOL,
+      lamports: 10 * LAMPORTS_PER_SOL,
     });
     const airdropTx = new anchor.web3.Transaction().add(airdropIx);
     await provider.sendAndConfirm(airdropTx);

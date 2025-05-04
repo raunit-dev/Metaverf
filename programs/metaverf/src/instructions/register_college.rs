@@ -41,7 +41,7 @@ pub struct RegisterCollege<'info> {
     #[account(
         init,
         payer = college_authority,
-        seeds = [b"college"], //, metaverf_account.uni_no.to_le_bytes().as_ref()
+        seeds = [b"college",metaverf_account.uni_no.to_le_bytes().as_ref()],
         bump,
         space = 8 + CollegeAccount::INIT_SPACE
     )]

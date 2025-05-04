@@ -35,7 +35,7 @@ pub struct RenewSubscription<'info> {
 
     #[account(
         mut,
-        seeds = [b"college"], //, metaverf_account.uni_no.to_le_bytes().as_ref()
+        seeds = [b"college",metaverf_account.uni_no.to_le_bytes().as_ref()], //, metaverf_account.uni_no.to_le_bytes().as_ref()
         bump = college_account.bump
     )]
     pub college_account: Account<'info, CollegeAccount>,
