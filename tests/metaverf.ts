@@ -10,6 +10,7 @@ import {
   SystemProgram,
   Transaction,
 } from "@solana/web3.js";
+import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import {
   createMint,
   getAssociatedTokenAddressSync,
@@ -21,12 +22,22 @@ import {
     mplCore,
     fetchCollection
 } from "@metaplex-foundation/mpl-core";
+import {
+  base58,
+  createSignerFromKeypair,
+  generateSigner,
+  signerIdentity,
+  sol
+} from "@metaplex-foundation/umi";
 import { BN, min } from "bn.js";
 
 describe("metaverf", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
   const provider = anchor.getProvider();
   const connection = provider.connection;
+  const umi = createUmi(provider.connection.rpcEndpoint)
+    .use(mplCore());
+
   const annualFee = new BN(1e6);
   const subscriptionDuration = new BN(1e6);
 
@@ -56,6 +67,12 @@ describe("metaverf", () => {
   let treasury: PublicKey;
   let payerTokenAccount: PublicKey;
   let mintUsdc: PublicKey;
+
+  const signer = generateSigner(umi);
+  umi.use(signerIdentity(signer));
+
+// Generate a new random KeypairSigner using the Eddsa interface
+  const collectionSigner = generateSigner(umi);
   let collection = Keypair.generate();
 
   const [metaverfAccount, metaverfBump] = PublicKey.findProgramAddressSync(
@@ -63,6 +80,11 @@ describe("metaverf", () => {
     program.programId
   );
 
+  const [collegeAccount, collegeBump] = PublicKey.findProgramAddressSync(
+    [Buffer.from("college")],
+    program.programId
+  );
+  //new BN(collegeId).toArrayLike(Buffer, "le", 8)],
   
 
   before(async () => {
@@ -111,8 +133,17 @@ describe("metaverf", () => {
       collegeAuthority.publicKey,
       false,
       tokenProgram
-    )
+    );
 
+    // Initialize the collection account
+    collection = Keypair.generate();
+    const airdropIx = anchor.web3.SystemProgram.transfer({
+      fromPubkey: provider.wallet.publicKey,
+      toPubkey: collection.publicKey,
+      lamports: 1 * LAMPORTS_PER_SOL,
+    });
+    const airdropTx = new anchor.web3.Transaction().add(airdropIx);
+    await provider.sendAndConfirm(airdropTx);
   });
 
   it("Airdrop and Create Mints", async () => {
@@ -173,6 +204,39 @@ describe("metaverf", () => {
       .then(log);
 
     console.log("Register College signature:", tx);
+  });
+
+  it("Renew Subscription", async () => {
+    const metaverfInfo = await program.account.metaverfAccount.fetch(
+      metaverfAccount
+    );
+    const collegeId = metaverfInfo.uniNo - 1; // Get the last registered college
+
+    const [collegeAccount, collegeBump] = PublicKey.findProgramAddressSync(
+      [Buffer.from("college"), new BN(collegeId).toArrayLike(Buffer, "le", 8)],
+      program.programId
+    );
+
+    const tx = await program.methods
+      .renewSubscription()
+      .accountsPartial({
+        admin: admin.publicKey,
+        mintUsdc: mintUsdc,
+        collegeAccount: collegeAccount,
+        collegeAuthority: collegeAuthority.publicKey,
+        metaverfAccount: metaverfAccount,
+        treasury: treasury,
+        payerTokenAccount: payerTokenAccount,
+        associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+        tokenProgram: tokenProgram,
+        systemProgram: SystemProgram.programId,
+      })
+      .signers([collegeAuthority])
+      .rpc()
+      .then(confirm)
+      .then(log);
+
+    console.log("Renew Subscription signature:", tx);
   });
 
   it("Update Parameters", async () => {

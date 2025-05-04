@@ -41,7 +41,7 @@ pub struct RegisterCollege<'info> {
     #[account(
         init,
         payer = college_authority,
-        seeds = [b"college", metaverf_account.uni_no.to_le_bytes().as_ref()],
+        seeds = [b"college"], //, metaverf_account.uni_no.to_le_bytes().as_ref()
         bump,
         space = 8 + CollegeAccount::INIT_SPACE
     )]
@@ -52,7 +52,8 @@ pub struct RegisterCollege<'info> {
         payer = college_authority,
         associated_token::mint = mint_usdc,
         associated_token::authority = college_authority,
-        associated_token::token_program = token_program)]
+        associated_token::token_program = token_program
+    )]
     pub payer_token_account: InterfaceAccount<'info, TokenAccount>,
     //The payer who Payes on the Behalf of the College(The Payer for the College)
  

@@ -10,7 +10,8 @@ use crate::state::{CollegeAccount, MetaverfAccount};
 
 #[derive(Accounts)]
 pub struct RenewSubscription<'info> {
-    pub admin_key: SystemAccount<'info>,
+    #[account(mut)]
+    pub admin: Signer<'info>,
     pub mint_usdc: InterfaceAccount<'info, Mint>,
 
     #[account(mut)]
@@ -33,15 +34,18 @@ pub struct RenewSubscription<'info> {
     pub treasury: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
-        init,
-        payer = college_authority,
-        seeds = [b"college", metaverf_account.uni_no.to_le_bytes().as_ref()],
-        bump,
-        space = 8 + CollegeAccount::INIT_SPACE
+        mut,
+        seeds = [b"college"], //, metaverf_account.uni_no.to_le_bytes().as_ref()
+        bump = college_account.bump
     )]
     pub college_account: Account<'info, CollegeAccount>,
 
-    #[account(mut)]
+    #[account(
+        mut,
+        associated_token::mint = mint_usdc,
+        associated_token::authority = college_authority,
+        associated_token::token_program = token_program
+    )]
     pub payer_token_account: InterfaceAccount<'info, TokenAccount>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,
