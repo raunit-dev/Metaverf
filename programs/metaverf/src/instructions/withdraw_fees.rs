@@ -8,11 +8,9 @@ use anchor_spl::{
 
 #[derive(Accounts)]
 pub struct WithdrawFees<'info> {
-    #[account(
-        mut
-    )]
+    #[account(mut)]
     pub admin: Signer<'info>,
-
+    pub mint_usdc: InterfaceAccount<'info, Mint>,
     #[account(
         mut,
         seeds = [b"protocol"],
@@ -36,8 +34,6 @@ pub struct WithdrawFees<'info> {
         associated_token::token_program = token_program
     )]
     pub admin_token_account: InterfaceAccount<'info, TokenAccount>,
-
-    pub mint_usdc: InterfaceAccount<'info, Mint>,
 
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
