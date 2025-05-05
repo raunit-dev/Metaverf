@@ -41,11 +41,11 @@ pub mod metaverf {
         ctx.accounts.withdraw_fees(amount)
     }
 
-    // pub fn add_collection(ctx: Context<AddCollection>, name: String, uri: String) -> Result<()> {
-    //     ctx.accounts.add_collection(AddCollectionArgs { name, uri }, &ctx.bumps)
-    // }
+    pub fn add_collection(ctx: Context<AddCollection>,args: AddCollectionArgs) -> Result<()> {
+        ctx.accounts.add_collection(args)
+    }
 
-    // pub fn mint_certificates(ctx: Context<MintCertificates>, name: String, uri: String) -> Result<()> {
-    //     ctx.accounts.mint_certificates(CertificateArgs { name, uri })
-    // }
+    pub fn mint_certificates(ctx: Context<MintCertificates>, args: CertificateArgs) -> Result<()> {
+        ctx.accounts.mint_certificates(args)
+    }
 }
