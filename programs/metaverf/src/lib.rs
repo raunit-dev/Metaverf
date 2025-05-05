@@ -25,11 +25,11 @@ pub mod metaverf {
         ctx.accounts.initialize_protocol(annual_fee, subscription_duration, &ctx.bumps)
     }
 
-    pub fn register_college(ctx: Context<RegisterCollege>) -> Result<()> {
-        ctx.accounts.register_college(&ctx.bumps)//,college_id: u16,college_id,
+    pub fn register_college(ctx: Context<RegisterCollege>,college_id: u16) -> Result<()> {
+        ctx.accounts.register_college(college_id,&ctx.bumps)//,college_id: u16,college_id,
     }
 
-    pub fn renew_subscription(ctx: Context<RenewSubscription>) -> Result<()> {
+    pub fn renew_subscription(ctx: Context<RenewSubscription>,college_id: u16) -> Result<()> {
         ctx.accounts.renew_subscription()
     }
 

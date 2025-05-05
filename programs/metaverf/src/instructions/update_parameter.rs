@@ -28,7 +28,6 @@ impl<'info> UpdateParameter<'info> {
             self.metaverf_account.subscription_duration = duration;
         } 
 
-
         Ok(())
     }
 }

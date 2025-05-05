@@ -21,17 +21,14 @@ pub struct WithdrawFees<'info> {
     #[account(
         mut,
         associated_token::mint = mint_usdc,
-        associated_token::authority = metaverf_account,
-        associated_token::token_program = token_program
+        associated_token::authority = metaverf_account
     )]
     pub treasury: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
-        init_if_needed,
-        payer = admin,
+        mut,
         associated_token::mint = mint_usdc,
-        associated_token::authority = admin,
-        associated_token::token_program = token_program
+        associated_token::authority = admin
     )]
     pub admin_token_account: InterfaceAccount<'info, TokenAccount>,
 
@@ -42,7 +39,9 @@ pub struct WithdrawFees<'info> {
 
 impl<'info> WithdrawFees<'info> {
     pub fn withdraw_fees(&mut self, amount: u64) -> Result<()> {
-        let seeds = &[b"protocol".as_ref(), &[self.metaverf_account.verf_bump]];
+        let seeds = &[b"protocol".as_ref(),
+         &[self.metaverf_account.verf_bump]];
+
         let signer = &[&seeds[..]];
 
         let cpi_program = self.token_program.to_account_info();
@@ -56,7 +55,7 @@ impl<'info> WithdrawFees<'info> {
 
         let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer);
 
-        transfer_checked(cpi_ctx, amount, self.mint_usdc.decimals)?;//withdrawing the entire amount of stablecoins stored in my treasury 
+        transfer_checked(cpi_ctx, amount, self.mint_usdc.decimals)?;
         Ok(())
     }
 }

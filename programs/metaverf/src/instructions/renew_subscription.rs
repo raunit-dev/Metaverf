@@ -8,34 +8,34 @@ use anchor_spl::token::{transfer_checked, TransferChecked};
 
 use crate::state::{CollegeAccount, MetaverfAccount};
 
+#[instruction(college_id: u16)]
 #[derive(Accounts)]
 pub struct RenewSubscription<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
+    #[account(mut)]
     pub mint_usdc: InterfaceAccount<'info, Mint>,
 
     #[account(mut)]
-    pub college_authority: SystemAccount<'info>,
+    pub college_authority: Signer<'info>,
 
     #[account(
         mut,
         seeds = [b"protocol"],
         bump = metaverf_account.verf_bump
-        // has_one = admin_key
     )]
     pub metaverf_account: Account<'info, MetaverfAccount>,
 
     #[account(
         mut,
         associated_token::mint = mint_usdc,
-        associated_token::authority = metaverf_account,
-        associated_token::token_program = token_program
+        associated_token::authority = metaverf_account
     )]
     pub treasury: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         mut,
-        seeds = [b"college"], //, metaverf_account.uni_no.to_le_bytes().as_ref()
+        seeds = [b"college", college_id.to_le_bytes().as_ref()], //, metaverf_account.uni_no.to_le_bytes().as_ref()
         bump = college_account.bump
     )]
     pub college_account: Account<'info, CollegeAccount>,
@@ -43,8 +43,7 @@ pub struct RenewSubscription<'info> {
     #[account(
         mut,
         associated_token::mint = mint_usdc,
-        associated_token::authority = college_authority,
-        associated_token::token_program = token_program
+        associated_token::authority = college_authority
     )]
     pub payer_token_account: InterfaceAccount<'info, TokenAccount>,
 

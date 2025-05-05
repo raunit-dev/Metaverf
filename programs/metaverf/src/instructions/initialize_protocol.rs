@@ -9,7 +9,7 @@ use anchor_spl::{
 pub struct InitializeProtocol<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,//The admin of the Protocol
-
+    #[account(mut)]
     pub mint_usdc: InterfaceAccount<'info, Mint>,//The StableCoin we are taking on our protocol currently
 
     #[account(
@@ -22,11 +22,10 @@ pub struct InitializeProtocol<'info> {
     pub metaverf_account: Account<'info, MetaverfAccount>,//The protocol Struct initialize
 
     #[account(
-        init_if_needed,
+        init,
         payer = admin,
         associated_token::mint = mint_usdc,
-        associated_token::authority = metaverf_account,
-        associated_token::token_program = token_program
+        associated_token::authority = metaverf_account
     )]
     pub treasury: InterfaceAccount<'info, TokenAccount>,//The Treasury of the Protocol where all the Money will get stored
 
