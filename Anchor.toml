@@ -8,6 +8,7 @@ skip-lint = false
 [programs.localnet]
 metaverf = "EaWRVXxw9uKq5ydVwqLYdmfY3gzSdRCqumRHrCFet5Rz"
 
+
 [registry]
 url = "https://api.apr.dev"
 

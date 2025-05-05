@@ -27,7 +27,7 @@ pub struct WithdrawFees<'info> {
     pub treasury: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
-        init,
+        init_if_needed,
         payer = admin,
         associated_token::mint = mint_usdc,
         associated_token::authority = admin,

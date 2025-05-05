@@ -22,7 +22,7 @@ pub struct InitializeProtocol<'info> {
     pub metaverf_account: Account<'info, MetaverfAccount>,//The protocol Struct initialize
 
     #[account(
-        init,
+        init_if_needed,
         payer = admin,
         associated_token::mint = mint_usdc,
         associated_token::authority = metaverf_account,
