@@ -17,6 +17,12 @@ declare_id!("EaWRVXxw9uKq5ydVwqLYdmfY3gzSdRCqumRHrCFet5Rz");
 //     pub uri: String,
 // }
 
+// #[derive(AnchorSerialize, AnchorDeserialize)]
+// pub struct AddCollectionArgs {
+//     pub name: String,
+//     pub uri: String,
+// }
+
 #[program]
 pub mod metaverf {
     use super::*;
@@ -26,7 +32,7 @@ pub mod metaverf {
     }
 
     pub fn register_college(ctx: Context<RegisterCollege>,college_id: u16) -> Result<()> {
-        ctx.accounts.register_college(college_id,&ctx.bumps)//,college_id: u16,college_id,
+        ctx.accounts.register_college(college_id,&ctx.bumps)
     }
 
     pub fn renew_subscription(ctx: Context<RenewSubscription>,_college_id: u16) -> Result<()> {
@@ -41,11 +47,11 @@ pub mod metaverf {
         ctx.accounts.withdraw_fees(amount)
     }
 
-    pub fn add_collection(ctx: Context<AddCollection>,args: AddCollectionArgs) -> Result<()> {
+    pub fn add_collection(ctx: Context<AddCollection>,_college_id: u16,args: AddCollectionArgs) -> Result<()> {
         ctx.accounts.add_collection(args)
     }
 
-    pub fn mint_certificates(ctx: Context<MintCertificates>, args: CertificateArgs) -> Result<()> {
-        ctx.accounts.mint_certificates(args)
+    pub fn mint_certificates(ctx: Context<MintCertificate>, args: CertificateArgs) -> Result<()> {
+        ctx.accounts.mint_certificate(args)
     }
 }

@@ -10,6 +10,7 @@ use crate::error::CertificateError;
 use crate::college::CollectionInfo;
 
 #[derive(Accounts)]
+#[instruction(college_id: u16)]
 pub struct AddCollection<'info> {
     #[account(mut)]
     pub college_authority: Signer<'info>,
@@ -30,7 +31,6 @@ pub struct AddCollection<'info> {
     #[account(address = MPL_CORE_ID)]
     ///CHECK: UncheckedAccount will be checked by mpl
     pub mpl_core_program: UncheckedAccount<'info>,
-
     pub system_program: Program<'info, System>,
 }
 

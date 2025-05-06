@@ -10,8 +10,9 @@ use crate::state::{CollegeAccount, MetaverfAccount};
 
 
 
-#[instruction(college_id: u16)]
+
 #[derive(Accounts)]
+#[instruction(college_id: u16)]
 pub struct RegisterCollege<'info> {
 
     #[account(mut)]

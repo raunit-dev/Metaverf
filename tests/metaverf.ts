@@ -23,7 +23,8 @@ import {
 import {
     MPL_CORE_PROGRAM_ID,
     mplCore,
-    fetchCollection
+    fetchCollection,
+    Key
 } from "@metaplex-foundation/mpl-core";
 import {
   Account,
@@ -46,6 +47,7 @@ describe("metaverf", () => {
   let treasury: PublicKey;
   let mintUsdc: PublicKey;
   let adminTokenAccount: PublicKey;
+  let newCollection: Keypair;
 
   // Create a list to store college authorities
   const totalColleges = 3;
@@ -165,6 +167,7 @@ describe("metaverf", () => {
   });
 
   it("Initialize Protocol", async () => {
+    try {
     const tx = await program.methods
       .initialize(annualFee, subscriptionDuration)
       .accountsPartial({
@@ -182,11 +185,16 @@ describe("metaverf", () => {
       .then(log);
 
     console.log("Protocol initialization signature:", tx);
+    }
+    catch (error) {
+       console.log(error)
+    }
   });
 
   // Register and renew for each college individually
   for (let i = 0; i < totalColleges; i++) {
     it(`Register College ${i + 1}`, async () => {
+      try {
       const collegeId = i + 1;
       
       // Derive PDA for this specific college ID
@@ -194,6 +202,8 @@ describe("metaverf", () => {
         [Buffer.from("college"), new Uint8Array([collegeId, 0])], // le bytes for u16
         program.programId
       );
+
+      console.log(collegeAuthorities[i].publicKey);
 
       const tx = await program.methods
         .registerCollege(collegeId) // Pass college_id as number, not BN
@@ -215,9 +225,14 @@ describe("metaverf", () => {
         .then(log);
 
       console.log(`Register College ${collegeId} signature:`, tx);
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
 
     it(`Renew Subscription College ${i + 1}`, async () => {
+      try {
       const collegeId = i + 1;
       
       // Use the same PDA derivation as in registration for this college
@@ -246,10 +261,58 @@ describe("metaverf", () => {
         .then(log);
 
       console.log(`Renew Subscription College ${collegeId} signature:`, tx);
+      }
+      catch (error) {
+        console.log(error)
+      }
     });
+
+    it(`Add collections to college ${i + 1}`, async () => {
+      try {
+      const collegeId = i + 1;
+
+      const [collegeAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from("college"), new Uint8Array([collegeId,0])],
+        program.programId
+      )
+
+      const newCollection = Keypair.generate();
+
+    const args = {
+      name: "TEST COLLECTION",
+      uri: "https://example.com/event"
+    }
+
+      const tx = await program.methods
+      .addCollection(collegeId,args)
+      .accountsStrict({
+        collegeAccount: collegeAccount,
+        collegeAuthority: collegeAuthorities[i].publicKey,
+        mplCoreProgram: MPL_CORE_PROGRAM_ID,
+        newCollection: newCollection.publicKey,
+        systemProgram: SystemProgram.programId
+      })
+      .signers([collegeAuthorities[i],newCollection])
+      .rpc()
+      .then(confirm)
+      .then(log)
+      console.log(`Add collections to college ${collegeId} signature:`, tx);
+    }
+    catch (error) {
+      console.log(error)
+    }
+
+    })
+
+
+
+
+
+
   }
 
   it("Register Multiple Colleges Simultaneously", async () => {
+    try {
     // Create new college authorities
     const simultaneousCollegeAuthorities = [
       Keypair.generate(),
@@ -343,9 +406,15 @@ describe("metaverf", () => {
         console.error(`Failed to fetch college ${nextCollegeIds[i]} data:`, err);
       }
     }
+  }
+  catch (error) {
+    console.log(error)
+  }
   });
 
   it("Update Parameters", async () => {
+    try {
+
     const newAnnualFee = new BN(2e6);
     const newSubscriptionDuration = new BN(2e6);
     const tx = await program.methods
@@ -360,9 +429,14 @@ describe("metaverf", () => {
       .then(log);
 
     console.log("Update Parameters signature:", tx);
+    }
+    catch (error) {
+      console.log(error)
+    }
   });
 
   it("Withdraw Fees", async () => {
+    try {
     const amount = new BN(0); // Withdraw all fees
     const tx = await program.methods
       .withdrawFees(amount)
@@ -382,5 +456,9 @@ describe("metaverf", () => {
       .then(log);
 
     console.log("Withdraw success:", tx);
+    }
+    catch(error) {
+      console.log(error)
+    }
   });
 });

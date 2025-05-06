@@ -8,8 +8,9 @@ use anchor_spl::token::{transfer_checked, TransferChecked};
 
 use crate::state::{CollegeAccount, MetaverfAccount};
 
-#[instruction(college_id: u16)]
+
 #[derive(Accounts)]
+#[instruction(college_id: u16)]
 pub struct RenewSubscription<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,
