@@ -9,11 +9,14 @@ use anchor_spl::{
 use crate::state::{CollegeAccount, MetaverfAccount};
 
 
+
 #[instruction(college_id: u16)]
 #[derive(Accounts)]
 pub struct RegisterCollege<'info> {
+
     #[account(mut)]
     pub admin: Signer<'info>,
+
     #[account(mut)]
     pub mint_usdc: InterfaceAccount<'info, Mint>,
 
@@ -65,6 +68,7 @@ impl<'info> RegisterCollege<'info> {
             active: true,
             bump: bumps.college_account,
             update_authority: self.college_authority.key(),
+            collections: Vec::new(),
         });
         
         // Transfer annual fee to protocol treasury

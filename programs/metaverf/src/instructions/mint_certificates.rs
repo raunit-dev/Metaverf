@@ -5,7 +5,9 @@ use mpl_core::{
     ID as MPL_CORE_ID,
 };
 
-use crate::state::{CollegeAccount, MetaverfAccount, CertificateError};
+use crate::state::{CollegeAccount, MetaverfAccount};
+// use crate::college::CollectionInfo;
+use crate::error::CertificateError;
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct CertificateArgs {
@@ -19,6 +21,7 @@ pub struct CertificateArgs {
 
 #[derive(Accounts)]
 pub struct MintCertificate<'info> {
+    
     #[account(mut)]
     pub college: Signer<'info>,
 

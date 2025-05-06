@@ -5,7 +5,9 @@ use mpl_core::{
     ID as MPL_CORE_ID,
 };
 
-use crate::state::{CollegeAccount, CollectionInfo, CertificateError};
+use crate::state::CollegeAccount;
+use crate::error::CertificateError;
+use crate::college::CollectionInfo;
 
 #[derive(Accounts)]
 pub struct AddCollection<'info> {

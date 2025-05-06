@@ -29,7 +29,7 @@ pub mod metaverf {
         ctx.accounts.register_college(college_id,&ctx.bumps)//,college_id: u16,college_id,
     }
 
-    pub fn renew_subscription(ctx: Context<RenewSubscription>,college_id: u16) -> Result<()> {
+    pub fn renew_subscription(ctx: Context<RenewSubscription>,_college_id: u16) -> Result<()> {
         ctx.accounts.renew_subscription()
     }
 
