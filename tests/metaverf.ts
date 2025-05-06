@@ -41,6 +41,10 @@ describe("metaverf", () => {
   const provider = anchor.getProvider();
   const connection = provider.connection;
 
+//   const connection = new Connection(
+//     `https://devnet.helius-rpc.com/?api-key=7888228e-d442-425c-80f8-825464f4c357`
+// );
+
   const annualFee = new BN(1e6);
   const subscriptionDuration = new BN(1e6);
   let admin: Keypair;
@@ -166,6 +170,8 @@ describe("metaverf", () => {
     );
   });
 
+  
+
   it("Initialize Protocol", async () => {
     try {
     const tx = await program.methods
@@ -276,7 +282,7 @@ describe("metaverf", () => {
         program.programId
       )
 
-      const newCollection = Keypair.generate();
+      newCollection = Keypair.generate();
 
     const args = {
       name: "TEST COLLECTION",
@@ -303,11 +309,6 @@ describe("metaverf", () => {
     }
 
     })
-
-
-
-
-
 
   }
 

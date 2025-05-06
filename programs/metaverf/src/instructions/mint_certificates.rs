@@ -20,10 +20,11 @@ pub struct CertificateArgs {
 }
 
 #[derive(Accounts)]
+#[instruction(college_id: u16)]
 pub struct MintCertificate<'info> {
     
     #[account(mut)]
-    pub college: Signer<'info>,
+    pub college_authority: Signer<'info>,
 
     #[account(
         mut,
@@ -36,7 +37,7 @@ pub struct MintCertificate<'info> {
         mut,
         seeds = [b"college", college_account.id.to_le_bytes().as_ref()],
         bump = college_account.bump,
-        constraint = college_account.authority == college.key() @ CertificateError::NotAuthorized,
+        constraint = college_account.authority == college_authority.key() @ CertificateError::NotAuthorized,
         constraint = college_account.active @ CertificateError::CollegeNotActive,
     )]
     pub college_account: Account<'info, CollegeAccount>,
@@ -98,10 +99,10 @@ impl<'info> MintCertificate<'info> {
         CreateV1CpiBuilder::new(&self.mpl_core_program.to_account_info())
             .asset(&self.asset.to_account_info())
             .collection(Some(&self.collection.to_account_info()))
-            .authority(Some(&self.college.to_account_info()))
-            .payer(&self.college.to_account_info())
+            .authority(Some(&self.college_authority.to_account_info()))
+            .payer(&self.college_authority.to_account_info())
             .owner(Some(&self.student_wallet.to_account_info()))
-            .update_authority(Some(&self.college.to_account_info()))
+            .update_authority(Some(&self.college_authority.to_account_info()))
             .system_program(&self.system_program.to_account_info())
             .data_state(DataState::AccountState)
             .name(args.name)
