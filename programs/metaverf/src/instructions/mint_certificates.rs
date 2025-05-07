@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use mpl_core::{
-    instructions::CreateV1CpiBuilder,
+    instructions::CreateV2CpiBuilder,
     types::{DataState, PermanentFreezeDelegate, Plugin, PluginAuthorityPair, Attributes, Attribute, PluginAuthority},
     ID as MPL_CORE_ID,
 };
@@ -8,7 +8,7 @@ use mpl_core::{
 use crate::state::{CollegeAccount, MetaverfAccount};
 // use crate::college::CollectionInfo;
 use crate::error::CertificateError;
-
+// CreateV1CpiBuilder
 #[derive(AnchorSerialize, AnchorDeserialize, Clone)]
 pub struct CertificateArgs {
     pub name: String,
@@ -96,7 +96,7 @@ impl<'info> MintCertificate<'info> {
         }
 
         // Create the certificate NFT with PermanentFreezeDelegate to ensure immutability
-        CreateV1CpiBuilder::new(&self.mpl_core_program.to_account_info())
+        CreateV2CpiBuilder::new(&self.mpl_core_program.to_account_info())
             .asset(&self.asset.to_account_info())
             .collection(Some(&self.collection.to_account_info()))
             .authority(Some(&self.college_authority.to_account_info()))

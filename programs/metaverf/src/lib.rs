@@ -51,7 +51,7 @@ pub mod metaverf {
         ctx.accounts.add_collection(args)
     }
 
-    pub fn mint_certificates(ctx: Context<MintCertificate>, args: CertificateArgs) -> Result<()> {
+    pub fn mint_certificates(ctx: Context<MintCertificate>,_college_id: u16, args: CertificateArgs) -> Result<()> {
         ctx.accounts.mint_certificate(args)
     }
 }

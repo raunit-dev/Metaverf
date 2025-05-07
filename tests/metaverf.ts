@@ -11,7 +11,6 @@ import {
   Transaction,
   
 } from "@solana/web3.js";
-import { createUmi } from "@metaplex-foundation/umi-bundle-defaults";
 import {
   createMint,
   getAssociatedTokenAddressSync,
@@ -22,7 +21,6 @@ import {
 } from "@solana/spl-token";
 import {
     MPL_CORE_PROGRAM_ID,
-    mplCore,
     fetchCollection,
     Key
 } from "@metaplex-foundation/mpl-core";
@@ -35,11 +33,20 @@ import {
   sol
 } from "@metaplex-foundation/umi";
 import { BN, min } from "bn.js";
+import { createUmi } from '@metaplex-foundation/umi-bundle-defaults'
+import { mplCore } from '@metaplex-foundation/mpl-core'
+import { assert } from "chai";
 
 describe("metaverf", () => {
   anchor.setProvider(anchor.AnchorProvider.env());
   const provider = anchor.getProvider();
   const connection = provider.connection;
+
+  // Use the RPC endpoint of your choice.
+const umi = createUmi('http://api.devenet.solana.com')
+// ... // additional umi settings, packages, and signers
+.use(mplCore())
+
 
 //   const connection = new Connection(
 //     `https://devnet.helius-rpc.com/?api-key=7888228e-d442-425c-80f8-825464f4c357`
@@ -52,6 +59,8 @@ describe("metaverf", () => {
   let mintUsdc: PublicKey;
   let adminTokenAccount: PublicKey;
   let newCollection: Keypair;
+  let studentWallet1: PublicKey;
+  let asset: PublicKey;
 
   // Create a list to store college authorities
   const totalColleges = 3;
@@ -99,6 +108,19 @@ describe("metaverf", () => {
     });
     const tx = new Transaction().add(transferIx);
     await provider.sendAndConfirm(tx);
+
+    studentWallet1 = anchor.web3.Keypair.generate();
+
+    //add funds to new payer
+    const transaction = new anchor.web3.Transaction().add(
+      anchor.web3.SystemProgram.transfer({
+        fromPubkey: provider.publicKey,
+        toPubkey: studentWallet1.publicKey,
+        lamports: 40000000,
+      })
+    );
+
+    await provider.sendAndConfirm(transaction);
 
     // Fund all college authorities
     for (let i = 0; i < totalColleges; i++) {
@@ -310,108 +332,166 @@ describe("metaverf", () => {
 
     })
 
+
+    it(`Add assest to college ${i + 1}`, async () => {
+      try {
+      const collegeId = i + 1;
+
+      const [collegeAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from("college"), new Uint8Array([collegeId,0])],
+        program.programId
+      )
+
+      newCollection = Keypair.generate();
+
+    const args = {
+      name: "TEST ASSET",
+      uri: "https://example.com/event",
+      student_name: "RAUNIT JAISWAL",
+      course_name: "Turbine",
+      completion_date: "15 feb",
+      grade: "1st year",
+    }
+
+    asset = Keypair.generate();
+    
+ 
+    const transaction2 = new anchor.web3.Transaction().add(
+      anchor.web3.SystemProgram.transfer({
+        fromPubkey: provider.publicKey,
+        toPubkey: asset.publicKey,
+        lamports: 40000000,
+      })
+    );
+
+    await provider.sendAndConfirm(transaction2);
+
+
+      const tx = await program.methods
+      .mintCertificates(collegeId,args)
+      .accountsStrict({
+        collegeAccount: collegeAccount,
+        collegeAuthority: collegeAuthorities[i].publicKey,
+        mplCoreProgram: MPL_CORE_PROGRAM_ID,
+        collection: newCollection.publicKey,
+        systemProgram: SystemProgram.programId
+      })
+      .signers([collegeAuthorities[i],newCollection])
+      .rpc()
+      .then(confirm)
+      .then(log)
+      console.log(`Add colle to college ${collegeId} signature:`, tx);
+    }
+    catch (error) {
+      console.log(error)
+    }
+
+    })
+   
+
+
   }
 
-  it("Register Multiple Colleges Simultaneously", async () => {
-    try {
-    // Create new college authorities
-    const simultaneousCollegeAuthorities = [
-      Keypair.generate(),
-      Keypair.generate()
-    ];
+  // it("Register Multiple Colleges Simultaneously", async () => {
+  //   try {
+  //   // Create new college authorities
+  //   const simultaneousCollegeAuthorities = [
+  //     Keypair.generate(),
+  //     Keypair.generate()
+  //   ];
     
-    // Fund these new authorities
-    for (const authority of simultaneousCollegeAuthorities) {
-      const transferIx = SystemProgram.transfer({
-        fromPubkey: provider.publicKey,
-        toPubkey: authority.publicKey,
-        lamports: 10 * LAMPORTS_PER_SOL,
-      });
-      await provider.sendAndConfirm(new Transaction().add(transferIx));
-    }
+  //   // Fund these new authorities
+  //   for (const authority of simultaneousCollegeAuthorities) {
+  //     const transferIx = SystemProgram.transfer({
+  //       fromPubkey: provider.publicKey,
+  //       toPubkey: authority.publicKey,
+  //       lamports: 10 * LAMPORTS_PER_SOL,
+  //     });
+  //     await provider.sendAndConfirm(new Transaction().add(transferIx));
+  //   }
     
-    // Create token accounts for these authorities
-    const simultaneousTokenAccounts = [];
-    for (const authority of simultaneousCollegeAuthorities) {
-      const tokenAccount = (await getOrCreateAssociatedTokenAccount(
-        provider.connection,
-        admin,
-        mintUsdc,
-        authority.publicKey,
-        false
-      )).address;
+  //   // Create token accounts for these authorities
+  //   const simultaneousTokenAccounts = [];
+  //   for (const authority of simultaneousCollegeAuthorities) {
+  //     const tokenAccount = (await getOrCreateAssociatedTokenAccount(
+  //       provider.connection,
+  //       admin,
+  //       mintUsdc,
+  //       authority.publicKey,
+  //       false
+  //     )).address;
       
-      simultaneousTokenAccounts.push(tokenAccount);
+  //     simultaneousTokenAccounts.push(tokenAccount);
       
-      // Mint tokens to each
-      await mintTo(
-        provider.connection,
-        admin,
-        mintUsdc,
-        tokenAccount,
-        admin,
-        1000000000
-      );
-    }
+  //     // Mint tokens to each
+  //     await mintTo(
+  //       provider.connection,
+  //       admin,
+  //       mintUsdc,
+  //       tokenAccount,
+  //       admin,
+  //       1000000000
+  //     );
+  //   }
     
-    // Next college IDs
-    const nextCollegeIds = [4, 5]; // After the first 3
+  //   // Next college IDs
+  //   const nextCollegeIds = [4, 5]; // After the first 3
     
-    // PDAs for the new colleges
-    const simultaneousCollegePDAs = nextCollegeIds.map(id => {
-      const [pda] = PublicKey.findProgramAddressSync(
-        [Buffer.from("college"), new Uint8Array([id, 0])], // le bytes for u16
-        program.programId
-      );
-      return pda;
-    });
+  //   // PDAs for the new colleges
+  //   const simultaneousCollegePDAs = nextCollegeIds.map(id => {
+  //     const [pda] = PublicKey.findProgramAddressSync(
+  //       [Buffer.from("college"), new Uint8Array([id, 0])], // le bytes for u16
+  //       program.programId
+  //     );
+  //     return pda;
+  //   });
     
-    // Send transactions one after another but quickly
-    const signatures = [];
-    for (let i = 0; i < 2; i++) {
-      const tx = await program.methods
-        .registerCollege(nextCollegeIds[i])
-        .accountsPartial({
-          admin: admin.publicKey,
-          mintUsdc: mintUsdc,
-          collegeAccount: simultaneousCollegePDAs[i],
-          collegeAuthority: simultaneousCollegeAuthorities[i].publicKey,
-          metaverfAccount: metaverfAccount,
-          treasury: treasury,
-          payerTokenAccount: simultaneousTokenAccounts[i],
-          tokenProgram: tokenProgram,
-          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-          systemProgram: SystemProgram.programId
-        })
-        .signers([admin, simultaneousCollegeAuthorities[i]])
-        .rpc({ skipPreflight: true });
+  //   // Send transactions one after another but quickly
+  //   const signatures = [];
+  //   for (let i = 0; i < 2; i++) {
+  //     const tx = await program.methods
+  //       .registerCollege(nextCollegeIds[i])
+  //       .accountsPartial({
+  //         admin: admin.publicKey,
+  //         mintUsdc: mintUsdc,
+  //         collegeAccount: simultaneousCollegePDAs[i],
+  //         collegeAuthority: simultaneousCollegeAuthorities[i].publicKey,
+  //         metaverfAccount: metaverfAccount,
+  //         treasury: treasury,
+  //         payerTokenAccount: simultaneousTokenAccounts[i],
+  //         tokenProgram: tokenProgram,
+  //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  //         systemProgram: SystemProgram.programId
+  //       })
+  //       .signers([admin, simultaneousCollegeAuthorities[i]])
+  //       .rpc({ skipPreflight: true });
       
-      signatures.push(tx);
-    }
+  //     signatures.push(tx);
+  //   }
     
-    // Wait for all transactions to complete
-    await Promise.all(signatures.map(sig => confirm(sig).then(log)));
+  //   // Wait for all transactions to complete
+  //   await Promise.all(signatures.map(sig => confirm(sig).then(log)));
     
-    console.log("Multiple college registrations completed!");
+  //   console.log("Multiple college registrations completed!");
     
-    // Verify colleges were registered properly
-    for (let i = 0; i < 2; i++) {
-      try {
-        const collegeData = await program.account.collegeAccount.fetch(simultaneousCollegePDAs[i]);
-        console.log(`College ${nextCollegeIds[i]} data:`, {
-          id: collegeData.id,
-          authority: collegeData.authority.toString(),
-          active: collegeData.active
-        });
-      } catch (err) {
-        console.error(`Failed to fetch college ${nextCollegeIds[i]} data:`, err);
-      }
-    }
-  }
-  catch (error) {
-    console.log(error)
-  }
-  });
+  //   // Verify colleges were registered properly
+  //   for (let i = 0; i < 2; i++) {
+  //     try {
+  //       const collegeData = await program.account.collegeAccount.fetch(simultaneousCollegePDAs[i]);
+  //       console.log(`College ${nextCollegeIds[i]} data:`, {
+  //         id: collegeData.id,
+  //         authority: collegeData.authority.toString(),
+  //         active: collegeData.active
+  //       });
+  //     } catch (err) {
+  //       console.error(`Failed to fetch college ${nextCollegeIds[i]} data:`, err);
+  //     }
+  //   }
+  // }
+  // catch (error) {
+  //   console.log(error)
+  // }
+  // });
 
   it("Update Parameters", async () => {
     try {
