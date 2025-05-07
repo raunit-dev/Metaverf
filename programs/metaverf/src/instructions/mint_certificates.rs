@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use mpl_core::{
+    accounts::BaseCollectionV1,
     instructions::CreateV2CpiBuilder,
     types::{DataState, PermanentFreezeDelegate, Plugin, PluginAuthorityPair, Attributes, Attribute, PluginAuthority},
     ID as MPL_CORE_ID,
@@ -40,12 +41,13 @@ pub struct MintCertificate<'info> {
         constraint = college_account.collections.iter().any(|c| c.collection == collection.key()) @ CertificateError::CollectionNotFound,
     )] 
     ///CHECK: UncheckedAccount will be checked by mpl
-    pub collection: UncheckedAccount<'info>,
+    pub collection: Account<'info, BaseCollectionV1>,
 
     #[account(mut)]
     pub asset: Signer<'info>,
-
-    pub student_wallet: SystemAccount<'info>,//The owner Account of the certificates minted 
+ 
+    #[account(mut)]
+    pub student_wallet: Signer<'info>,//The owner Account of the certificates minted 
 
     #[account(address = MPL_CORE_ID)] 
     ///CHECK: UncheckedAccount will be checked by mpl
@@ -95,7 +97,6 @@ impl<'info> MintCertificate<'info> {
             .authority(Some(&self.college_authority.to_account_info()))
             .payer(&self.college_authority.to_account_info())
             .owner(Some(&self.student_wallet.to_account_info()))
-            .update_authority(Some(&self.college_authority.to_account_info()))
             .system_program(&self.system_program.to_account_info())
             .data_state(DataState::AccountState)
             .name(args.name)

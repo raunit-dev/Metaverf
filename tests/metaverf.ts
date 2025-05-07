@@ -60,7 +60,6 @@ const umi = createUmi('http://api.devenet.solana.com')
   let adminTokenAccount: PublicKey;
   let newCollection: Keypair;
   let studentWallet1: Keypair;
-  let asset: Keypair;
 
   // Create a list to store college authorities
   const totalColleges = 3;
@@ -192,7 +191,6 @@ const umi = createUmi('http://api.devenet.solana.com')
     );
   });
 
-  
 
   it("Initialize Protocol", async () => {
     try {
@@ -304,7 +302,8 @@ const umi = createUmi('http://api.devenet.solana.com')
         program.programId
       )
 
-      newCollection = Keypair.generate();
+      
+  newCollection = Keypair.generate();
 
     const args = {
       name: "TEST COLLECTION",
@@ -342,7 +341,9 @@ const umi = createUmi('http://api.devenet.solana.com')
         program.programId
       )
 
-      newCollection = Keypair.generate();
+      
+
+      // newCollection = Keypair.generate();
 
     const args = {
       name: "TEST ASSET",
@@ -353,7 +354,7 @@ const umi = createUmi('http://api.devenet.solana.com')
       grade: "1st year",
     }
 
-    asset = Keypair.generate();
+    const asset = Keypair.generate();
     
  
     const transaction2 = new anchor.web3.Transaction().add(
@@ -365,6 +366,11 @@ const umi = createUmi('http://api.devenet.solana.com')
     );
 
     await provider.sendAndConfirm(transaction2);
+
+    console.log("college authority",collegeAuthorities[i].publicKey.toBase58());
+    console.log("asset",asset.publicKey.toBase58());
+    console.log("new collection",newCollection.publicKey.toBase58());
+    console.log("student",studentWallet1.publicKey.toBase58());
 
 
       const tx = await program.methods
@@ -378,7 +384,7 @@ const umi = createUmi('http://api.devenet.solana.com')
         asset: asset.publicKey,
         studentWallet: studentWallet1.publicKey
       })
-      .signers([collegeAuthorities[i],newCollection])
+      .signers([collegeAuthorities[i],asset,studentWallet1])
       .rpc()
       .then(confirm)
       .then(log)
