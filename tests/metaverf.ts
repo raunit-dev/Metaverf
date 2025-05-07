@@ -34,21 +34,19 @@ describe("metaverf", () => {
   // Constants
   const annualFee = new BN(1e6);
   const subscriptionDuration = new BN(1e6);
-  const totalColleges = 3;
+  // Changed to 1 college only
+  const totalColleges = 1;
 
   // Keypairs and Public Keys
   let admin: Keypair;
   let treasury: PublicKey;
   let mintUsdc: PublicKey;
   let adminTokenAccount: PublicKey;
-  let studentWallet1: Keypair;
-
-  // Arrays to hold multiple keypairs/accounts
-  const studentWallets: Keypair[] = [];
-  const collegeAuthorities: Keypair[] = [];
-  const payerTokenAccounts: PublicKey[] = [];
-  const collections: Keypair[] = [];
-  const assets: Keypair[] = [];
+  let studentWallet: Keypair;
+  let collegeAuthority: Keypair;
+  let payerTokenAccount: PublicKey;
+  let collection: Keypair;
+  let asset: Keypair;
 
   // Program IDs
   const program = anchor.workspace.Metaverf as Program<Metaverf>;
@@ -89,53 +87,37 @@ describe("metaverf", () => {
     const tx = new Transaction().add(transferIx);
     await provider.sendAndConfirm(tx);
 
-    // Initialize student wallet
-    studentWallet1 = anchor.web3.Keypair.generate();
-    const transaction = new anchor.web3.Transaction().add(
+    // Initialize one college authority
+    collegeAuthority = Keypair.generate();
+    const authorityTransferIx = SystemProgram.transfer({
+      fromPubkey: provider.publicKey,
+      toPubkey: collegeAuthority.publicKey,
+      lamports: 10 * LAMPORTS_PER_SOL,
+    });
+    const authorityTx = new Transaction().add(authorityTransferIx);
+    await provider.sendAndConfirm(authorityTx);
+
+    // Initialize one student wallet
+    studentWallet = anchor.web3.Keypair.generate();
+    const studentTransaction = new anchor.web3.Transaction().add(
       anchor.web3.SystemProgram.transfer({
         fromPubkey: provider.publicKey,
-        toPubkey: studentWallet1.publicKey,
+        toPubkey: studentWallet.publicKey,
         lamports: 40000000,
       })
     );
-    await provider.sendAndConfirm(transaction);
+    await provider.sendAndConfirm(studentTransaction);
 
-    // Initialize college authorities and student wallets
-    for (let i = 0; i < totalColleges; i++) {
-      // Initialize student wallets
-      const studentWallet = anchor.web3.Keypair.generate();
-      studentWallets.push(studentWallet);
-      const transaction = new anchor.web3.Transaction().add(
-        anchor.web3.SystemProgram.transfer({
-          fromPubkey: provider.publicKey,
-          toPubkey: studentWallet.publicKey,
-          lamports: 40000000,
-        })
-      );
-      await provider.sendAndConfirm(transaction);
-
-      // Initialize college authorities
-      collegeAuthorities.push(Keypair.generate());
-      const transferIx = SystemProgram.transfer({
-        fromPubkey: provider.publicKey,
-        toPubkey: collegeAuthorities[i].publicKey,
-        lamports: 10 * LAMPORTS_PER_SOL,
-      });
-      const tx = new Transaction().add(transferIx);
-      await provider.sendAndConfirm(tx);
-
-      //initalize assets
-      assets.push(Keypair.generate())
-      const transaction2 = new anchor.web3.Transaction().add(
-        anchor.web3.SystemProgram.transfer({
-          fromPubkey: provider.publicKey,
-          toPubkey: assets[i].publicKey,
-          lamports: 40000000,
-        })
-      );
-
-      await provider.sendAndConfirm(transaction2);
-    }
+    // Initialize one asset keypair
+    asset = Keypair.generate();
+    // const assetTransaction = new anchor.web3.Transaction().add(
+    //   anchor.web3.SystemProgram.transfer({
+    //     fromPubkey: provider.publicKey,
+    //     toPubkey: asset.publicKey,
+    //     lamports: 40000000,
+    //   })
+    // );
+    // await provider.sendAndConfirm(assetTransaction);
 
     // Create USDC mint
     mintUsdc = await createMint(
@@ -162,28 +144,24 @@ describe("metaverf", () => {
       true // Allow off-curve addresses for PDAs
     );
 
-    // Create token accounts for all college authorities and mint tokens to them
-    for (let i = 0; i < totalColleges; i++) {
-      const payerTokenAccount = (await getOrCreateAssociatedTokenAccount(
-        provider.connection,
-        admin,
-        mintUsdc,
-        collegeAuthorities[i].publicKey,
-        false
-      )).address;
+    // Create token account for college authority and mint tokens to it
+    payerTokenAccount = (await getOrCreateAssociatedTokenAccount(
+      provider.connection,
+      admin,
+      mintUsdc,
+      collegeAuthority.publicKey,
+      false
+    )).address;
 
-      payerTokenAccounts.push(payerTokenAccount);
-
-      // Mint USDC to college authorities
-      await mintTo(
-        provider.connection,
-        admin,
-        mintUsdc,
-        payerTokenAccount,
-        admin,
-        1000000000
-      );
-    }
+    // Mint USDC to college authority
+    await mintTo(
+      provider.connection,
+      admin,
+      mintUsdc,
+      payerTokenAccount,
+      admin,
+      1000000000
+    );
 
     // Mint USDC to admin
     await mintTo(
@@ -216,160 +194,191 @@ describe("metaverf", () => {
 
       console.log("Protocol initialization signature:", tx);
     } catch (error) {
+      if (error instanceof anchor.web3.SendTransactionError) {
+        console.log("Detailed error:", error.logs);
+      } else {
+        console.log(error);
+      }
+    }
+  });
+
+  it("Register College", async () => {
+    try {
+      const collegeId = 1;
+
+      // Derive PDA for this specific college ID
+      const [collegeAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from("college"), new Uint8Array([collegeId, 0])], // le bytes for u16
+        program.programId
+      );
+
+      const tx = await program.methods
+        .registerCollege(collegeId)
+        .accountsPartial({
+          admin: admin.publicKey,
+          mintUsdc: mintUsdc,
+          collegeAccount: collegeAccount,
+          collegeAuthority: collegeAuthority.publicKey,
+          metaverfAccount: metaverfAccount,
+          treasury: treasury,
+          payerTokenAccount: payerTokenAccount,
+          tokenProgram: tokenProgram,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+        })
+        .signers([admin, collegeAuthority])
+        .rpc({ skipPreflight: true })
+        .then(confirm)
+        .then(log);
+
+      console.log(`Register College signature:`, tx);
+    } catch (error) {
+      if (error instanceof anchor.web3.SendTransactionError) {
+        console.log("Detailed error:", error.logs);
+      } else {
+        console.log(error);
+      }
+    }
+  });
+
+  it("Renew Subscription College", async () => {
+    try {
+      const collegeId = 1;
+
+      // Use the same PDA derivation as in registration
+      const [collegeAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+        program.programId
+      );
+
+      const tx = await program.methods
+        .renewSubscription(collegeId)
+        .accountsPartial({
+          admin: admin.publicKey,
+          mintUsdc: mintUsdc,
+          collegeAccount: collegeAccount,
+          collegeAuthority: collegeAuthority.publicKey,
+          metaverfAccount: metaverfAccount,
+          treasury: treasury,
+          payerTokenAccount: payerTokenAccount,
+          tokenProgram: tokenProgram,
+          associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+          systemProgram: SystemProgram.programId,
+        })
+        .signers([admin, collegeAuthority])
+        .rpc()
+        .then(confirm)
+        .then(log);
+
+      console.log(`Renew Subscription College signature:`, tx);
+    } catch (error) {
+      if (error instanceof anchor.web3.SendTransactionError) {
+        console.log("Detailed error:", error.logs);
+      } else {
+        console.log(error);
+      }
+    }
+  });
+
+  it("Add collection to college", async () => {
+    try {
+      const collegeId = 1;
+
+      const [collegeAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+        program.programId
+      );
+
+      // Create a new collection
+      collection = Keypair.generate();
+
+      const args = {
+        name: "TEST COLLECTION",
+        uri: "https://example.com/event",
+      };
+
+      const tx = await program.methods
+        .addCollection(collegeId, args)
+        .accountsStrict({
+          collegeAccount: collegeAccount,
+          collegeAuthority: collegeAuthority.publicKey,
+          mplCoreProgram: MPL_CORE_PROGRAM_ID,
+          newCollection: collection.publicKey,
+          systemProgram: SystemProgram.programId,
+        })
+        .signers([collegeAuthority, collection])
+        .rpc({ skipPreflight: true }) // Add skipPreflight for diagnostics
+        .catch(error => {
+          if (error instanceof anchor.web3.SendTransactionError) {
+            console.log("Detailed error:", error.logs);
+          }
+          throw error;
+        })
+        .then(confirm)
+        .then(log);
+        
+      console.log(`Add collection to college signature:`, tx);
+    } catch (error) {
       console.log(error);
     }
   });
 
-  // Loop through each college for registration, renewal, and adding collections
-  for (let i = 0; i < totalColleges; i++) {
-    it(`Register College ${i + 1}`, async () => {
-      try {
-        const collegeId = i + 1;
+  it("Add asset to college", async () => {
+    try {
+      const collegeId = 1;
 
-        // Derive PDA for this specific college ID
-        const [collegeAccount] = PublicKey.findProgramAddressSync(
-          [Buffer.from("college"), new Uint8Array([collegeId, 0])], // le bytes for u16
-          program.programId
-        );
+      const [collegeAccount] = PublicKey.findProgramAddressSync(
+        [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+        program.programId
+      );
 
-        const tx = await program.methods
-          .registerCollege(collegeId) // Pass college_id as number, not BN
-          .accountsPartial({
-            admin: admin.publicKey,
-            mintUsdc: mintUsdc,
-            collegeAccount: collegeAccount,
-            collegeAuthority: collegeAuthorities[i].publicKey,
-            metaverfAccount: metaverfAccount,
-            treasury: treasury,
-            payerTokenAccount: payerTokenAccounts[i],
-            tokenProgram: tokenProgram,
-            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-            systemProgram: SystemProgram.programId,
-          })
-          .signers([admin, collegeAuthorities[i]])
-          .rpc({ skipPreflight: true })
-          .then(confirm)
-          .then(log);
+      // Generate unique certificate data
+      const args = {
+        name: "TEST ASSET",
+        uri: "https://example.com/event",
+        studentName: "STUDENT NAME",
+        courseName: "Turbine",
+        completionDate: "15 feb",
+        grade: "1st year",
+      };
 
-        console.log(`Register College ${collegeId} signature:`, tx);
-      } catch (error) {
-        console.log(error);
-      }
-    });
+      // Debug information for verification
+      console.log("Collection public key:", collection.publicKey.toBase58());
+      console.log("Asset public key:", asset.publicKey.toBase58());
+      console.log("Student wallet public key:", studentWallet.publicKey.toBase58());
 
-    it(`Renew Subscription College ${i + 1}`, async () => {
-      try {
-        const collegeId = i + 1;
-
-        // Use the same PDA derivation as in registration for this college
-        const [collegeAccount] = PublicKey.findProgramAddressSync(
-          [Buffer.from("college"), new Uint8Array([collegeId, 0])], // le bytes for u16
-          program.programId
-        );
-
-        const tx = await program.methods
-          .renewSubscription(collegeId)
-          .accountsPartial({
-            admin: admin.publicKey,
-            mintUsdc: mintUsdc,
-            collegeAccount: collegeAccount,
-            collegeAuthority: collegeAuthorities[i].publicKey,
-            metaverfAccount: metaverfAccount,
-            treasury: treasury,
-            payerTokenAccount: payerTokenAccounts[i],
-            tokenProgram: tokenProgram,
-            associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
-            systemProgram: SystemProgram.programId,
-          })
-          .signers([admin, collegeAuthorities[i]])
-          .rpc()
-          .then(confirm)
-          .then(log);
-
-        console.log(`Renew Subscription College ${collegeId} signature:`, tx);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-
-    it(`Add collections to college ${i + 1}`, async () => {
-      try {
-        const collegeId = i + 1;
-
-        const [collegeAccount] = PublicKey.findProgramAddressSync(
-          [Buffer.from("college"), new Uint8Array([collegeId, 0])],
-          program.programId
-        );
-
-        // Create a new collection for this college
-        const newCollection = Keypair.generate();
-        collections[i] = newCollection; // Store for later use
-
-        const args = {
-          name: "TEST COLLECTION",
-          uri: "https://example.com/event",
-        };
-
-        const tx = await program.methods
-          .addCollection(collegeId, args)
-          .accountsStrict({
-            collegeAccount: collegeAccount,
-            collegeAuthority: collegeAuthorities[i].publicKey,
-            mplCoreProgram: MPL_CORE_PROGRAM_ID,
-            newCollection: newCollection.publicKey,
-            systemProgram: SystemProgram.programId,
-          })
-          .signers([collegeAuthorities[i], newCollection])
-          .rpc()
-          .then(confirm)
-          .then(log);
-        console.log(`Add collections to college ${collegeId} signature:`, tx);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-
-
-    it(`Add assest to college ${i + 1}`, async () => {
-      try {
-        const collegeId = i + 1;
-
-        const [collegeAccount] = PublicKey.findProgramAddressSync(
-          [Buffer.from("college"), new Uint8Array([collegeId, 0])],
-          program.programId
-        );
-
-        const args = {
-          name: "TEST ASSET",
-          uri: "https://example.com/event",
-          studentName: "RAUNIT JAISWAL",
-          courseName: "Turbine",
-          completionDate: "15 feb",
-          grade: "1st year",
-        };
-
-
-        const tx = await program.methods
-          .mintCertificate(collegeId, args)
-          .accountsStrict({
-            collegeAccount: collegeAccount,
-            collegeAuthority: collegeAuthorities[i].publicKey,
-            mplCoreProgram: MPL_CORE_PROGRAM_ID,
-            collection: collections[i].publicKey,
-            systemProgram: SystemProgram.programId,
-            asset: assets[i].publicKey,
-            studentWallet: studentWallets[i].publicKey,
-          })
-          .signers([collegeAuthorities[i], assets[i], studentWallets[i]])
-          .rpc()
-          .then(confirm)
-          .then(log);
-        console.log(`Add asset to college ${collegeId} signature:`, tx);
-      } catch (error) {
-        console.log(error);
-      }
-    });
-  }
+      const tx = await program.methods
+        .mintCertificate(collegeId, args)
+        .accountsStrict({
+          collegeAccount: collegeAccount,
+          collegeAuthority: collegeAuthority.publicKey,
+          mplCoreProgram: MPL_CORE_PROGRAM_ID,
+          collection: collection.publicKey,
+          systemProgram: SystemProgram.programId,
+          asset: asset.publicKey,
+          studentWallet: studentWallet.publicKey,
+        })
+        .signers([collegeAuthority, asset, studentWallet])
+        .rpc({ skipPreflight: true })
+        .catch(error => {
+          if (error instanceof anchor.web3.SendTransactionError) {
+            console.log("Detailed error logs:", error.logs);
+  // Try to read any program-generated errors
+  const programErrors = error.logs?.filter(log => 
+    log.includes("Program log:") && log.includes("Error")
+  );
+  if (programErrors?.length) console.log("Program errors:", programErrors);
+          }
+          throw error;
+        })
+        .then(confirm)
+        .then(log);
+        
+      console.log(`Add asset to college signature:`, tx);
+    } catch (error) {
+      console.log("Failed to mint certificate:", error);
+    }
+  });
 
   it("Update Parameters", async () => {
     try {
