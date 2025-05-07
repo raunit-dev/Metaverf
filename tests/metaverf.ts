@@ -48,6 +48,7 @@ describe("metaverf", () => {
   const collegeAuthorities: Keypair[] = [];
   const payerTokenAccounts: PublicKey[] = [];
   const collections: Keypair[] = [];
+  const assets: Keypair[] = [];
 
   // Program IDs
   const program = anchor.workspace.Metaverf as Program<Metaverf>;
@@ -122,6 +123,18 @@ describe("metaverf", () => {
       });
       const tx = new Transaction().add(transferIx);
       await provider.sendAndConfirm(tx);
+
+      //initalize assets
+      assets.push(Keypair.generate())
+      const transaction2 = new anchor.web3.Transaction().add(
+        anchor.web3.SystemProgram.transfer({
+          fromPubkey: provider.publicKey,
+          toPubkey: assets[i].publicKey,
+          lamports: 40000000,
+        })
+      );
+
+      await provider.sendAndConfirm(transaction2);
     }
 
     // Create USDC mint
@@ -316,6 +329,7 @@ describe("metaverf", () => {
       }
     });
 
+
     it(`Add assest to college ${i + 1}`, async () => {
       try {
         const collegeId = i + 1;
@@ -334,17 +348,6 @@ describe("metaverf", () => {
           grade: "1st year",
         };
 
-        const asset = Keypair.generate();
-
-        const transaction2 = new anchor.web3.Transaction().add(
-          anchor.web3.SystemProgram.transfer({
-            fromPubkey: provider.publicKey,
-            toPubkey: asset.publicKey,
-            lamports: 40000000,
-          })
-        );
-
-        await provider.sendAndConfirm(transaction2);
 
         const tx = await program.methods
           .mintCertificate(collegeId, args)
@@ -354,10 +357,10 @@ describe("metaverf", () => {
             mplCoreProgram: MPL_CORE_PROGRAM_ID,
             collection: collections[i].publicKey,
             systemProgram: SystemProgram.programId,
-            asset: asset.publicKey,
+            asset: assets[i].publicKey,
             studentWallet: studentWallets[i].publicKey,
           })
-          .signers([collegeAuthorities[i], asset, studentWallets[i]])
+          .signers([collegeAuthorities[i], assets[i], studentWallets[i]])
           .rpc()
           .then(confirm)
           .then(log);
