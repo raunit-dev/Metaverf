@@ -5,7 +5,7 @@ use mpl_core::{
     ID as MPL_CORE_ID,
 };
 
-use crate::state::{CollegeAccount, MetaverfAccount};
+use crate::state::CollegeAccount;
 // use crate::college::CollectionInfo;
 use crate::error::CertificateError;
 // CreateV1CpiBuilder
@@ -28,19 +28,12 @@ pub struct MintCertificate<'info> {
 
     #[account(
         mut,
-        seeds = [b"protocol"],
-        bump = metaverf_account.verf_bump,
-    )]
-    pub metaverf_account: Account<'info, MetaverfAccount>,
-
-    #[account(
-        mut,
         seeds = [b"college", college_account.id.to_le_bytes().as_ref()],
         bump = college_account.bump,
         constraint = college_account.authority == college_authority.key() @ CertificateError::NotAuthorized,
         constraint = college_account.active @ CertificateError::CollegeNotActive,
     )]
-    pub college_account: Account<'info, CollegeAccount>,
+    pub college_account: Account<'info, CollegeAccount>, //The college account which has the Initial Collection
 
     #[account(
         mut,
@@ -52,7 +45,7 @@ pub struct MintCertificate<'info> {
     #[account(mut)]
     pub asset: Signer<'info>,
 
-    pub student_wallet: SystemAccount<'info>,
+    pub student_wallet: SystemAccount<'info>,//The owner Account of the certificates minted 
 
     #[account(address = MPL_CORE_ID)] 
     ///CHECK: UncheckedAccount will be checked by mpl
