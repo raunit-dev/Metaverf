@@ -9,8 +9,6 @@ use anchor_spl::{
 use crate::state::{CollegeAccount, MetaverfAccount};
 
 
-
-
 #[derive(Accounts)]
 #[instruction(college_id: u16)]
 pub struct RegisterCollege<'info> {

@@ -55,7 +55,7 @@ pub struct MintCertificate<'info> {
 }
 
 impl<'info> MintCertificate<'info> {
-    pub fn mint_certificate(&mut self, args: CertificateArgs) -> Result<()> {
+    pub fn mint_certificate(&mut self,args: CertificateArgs) -> Result<()> {
         // Create attributes for the certificate NFT
         let mut attribute_list: Vec<Attribute> = vec![
             Attribute {

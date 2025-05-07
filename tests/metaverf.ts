@@ -59,8 +59,8 @@ const umi = createUmi('http://api.devenet.solana.com')
   let mintUsdc: PublicKey;
   let adminTokenAccount: PublicKey;
   let newCollection: Keypair;
-  let studentWallet1: PublicKey;
-  let asset: PublicKey;
+  let studentWallet1: Keypair;
+  let asset: Keypair;
 
   // Create a list to store college authorities
   const totalColleges = 3;
@@ -347,9 +347,9 @@ const umi = createUmi('http://api.devenet.solana.com')
     const args = {
       name: "TEST ASSET",
       uri: "https://example.com/event",
-      student_name: "RAUNIT JAISWAL",
-      course_name: "Turbine",
-      completion_date: "15 feb",
+      studentName: "RAUNIT JAISWAL",
+      courseName: "Turbine",
+      completionDate: "15 feb",
       grade: "1st year",
     }
 
@@ -368,13 +368,15 @@ const umi = createUmi('http://api.devenet.solana.com')
 
 
       const tx = await program.methods
-      .mintCertificates(collegeId,args)
+      .mintCertificate(collegeId,args)
       .accountsStrict({
         collegeAccount: collegeAccount,
         collegeAuthority: collegeAuthorities[i].publicKey,
         mplCoreProgram: MPL_CORE_PROGRAM_ID,
         collection: newCollection.publicKey,
-        systemProgram: SystemProgram.programId
+        systemProgram: SystemProgram.programId,
+        asset: asset.publicKey,
+        studentWallet: studentWallet1.publicKey
       })
       .signers([collegeAuthorities[i],newCollection])
       .rpc()

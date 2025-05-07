@@ -6,6 +6,7 @@ use anchor_spl::{
 };
 
 #[derive(Accounts)]
+
 pub struct InitializeProtocol<'info> {
     #[account(mut)]
     pub admin: Signer<'info>,//The admin of the Protocol
