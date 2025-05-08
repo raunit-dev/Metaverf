@@ -319,6 +319,32 @@ describe("metaverf", () => {
     }
   });
 
+  // it("Withdraw Fees 1st time", async () => {
+  //   try {
+  //     const amount = new BN(10); // Withdraw all fees
+  //     const tx = await program.methods
+  //       .withdrawFees(amount)
+  //       .accountsPartial({
+  //         admin: admin.publicKey,
+  //         mintUsdc: mintUsdc,
+  //         metaverfAccount: metaverfAccount,
+  //         treasury: treasury,
+  //         adminTokenAccount,
+  //         tokenProgram: tokenProgram,
+  //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  //         systemProgram: SystemProgram.programId,
+  //       })
+  //       .signers([admin])
+  //       .rpc()
+  //       .then(confirm)
+  //       .then(log);
+
+  //     console.log("Withdraw success:", tx);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
+
   it("Add collection1 to college", async () => {
     try {
       const collegeId = 1;
@@ -577,6 +603,33 @@ describe("metaverf", () => {
     }
   });
 
+
+  // it("Withdraw Fees 2nd time", async () => {
+  //   try {
+  //     const amount = new BN(10); // Withdraw all fees
+  //     const tx = await program.methods
+  //       .withdrawFees(amount)
+  //       .accountsPartial({
+  //         admin: admin.publicKey,
+  //         mintUsdc: mintUsdc,
+  //         metaverfAccount: metaverfAccount,
+  //         treasury: treasury,
+  //         adminTokenAccount,
+  //         tokenProgram: tokenProgram,
+  //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  //         systemProgram: SystemProgram.programId,
+  //       })
+  //       .signers([admin])
+  //       .rpc()
+  //       .then(confirm)
+  //       .then(log);
+
+  //     console.log("Withdraw success:", tx);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
+
   // it("Minting Certificates for Student1 under collection2", async () => {
   //   try {
   //     const collegeId = 1;
@@ -771,7 +824,7 @@ describe("metaverf", () => {
     }
   });
 
-  it("Withdraw Fees", async () => {
+  it("Withdraw Fees last time", async () => {
     try {
       const amount = new BN(10); // Withdraw all fees
       const tx = await program.methods
@@ -796,4 +849,621 @@ describe("metaverf", () => {
       console.log(error);
     }
   });
+
+
+
+
+
+
+  // it("Register College", async () => {
+  //   try {
+  //     const collegeId = 1;
+
+  //     // Derive PDA for this specific college ID
+  //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  //       [Buffer.from("college"), new Uint8Array([collegeId, 0])], // le bytes for u16
+  //       program.programId
+  //     );
+
+  //     const tx = await program.methods
+  //       .registerCollege(collegeId)
+  //       .accountsPartial({
+  //         admin: admin.publicKey,
+  //         mintUsdc: mintUsdc,
+  //         collegeAccount: collegeAccount,
+  //         collegeAuthority: collegeAuthority.publicKey,
+  //         metaverfAccount: metaverfAccount,
+  //         treasury: treasury,
+  //         payerTokenAccount: payerTokenAccount,
+  //         tokenProgram: tokenProgram,
+  //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  //         systemProgram: SystemProgram.programId,
+  //       })
+  //       .signers([admin, collegeAuthority])
+  //       .rpc({ skipPreflight: true })
+  //       .then(confirm)
+  //       .then(log);
+
+  //     console.log(`Register College signature:`, tx);
+  //   } catch (error) {
+  //     if (error instanceof anchor.web3.SendTransactionError) {
+  //       console.log("Detailed error:", error.logs);
+  //     } else {
+  //       console.log(error);
+  //     }
+  //   }
+  // });
+
+  // it("Renew Subscription College", async () => {
+  //   try {
+  //     const collegeId = 1;
+
+  //     // Use the same PDA derivation as in registration
+  //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  //       program.programId
+  //     );
+
+  //     const tx = await program.methods
+  //       .renewSubscription(collegeId)
+  //       .accountsPartial({
+  //         admin: admin.publicKey,
+  //         mintUsdc: mintUsdc,
+  //         collegeAccount: collegeAccount,
+  //         collegeAuthority: collegeAuthority.publicKey,
+  //         metaverfAccount: metaverfAccount,
+  //         treasury: treasury,
+  //         payerTokenAccount: payerTokenAccount,
+  //         tokenProgram: tokenProgram,
+  //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  //         systemProgram: SystemProgram.programId,
+  //       })
+  //       .signers([admin, collegeAuthority])
+  //       .rpc()
+  //       .then(confirm)
+  //       .then(log);
+
+  //     console.log(`Renew Subscription College signature:`, tx);
+  //   } catch (error) {
+  //     if (error instanceof anchor.web3.SendTransactionError) {
+  //       console.log("Detailed error:", error.logs);
+  //     } else {
+  //       console.log(error);
+  //     }
+  //   }
+  // });
+
+  // // it("Withdraw Fees 1st time", async () => {
+  // //   try {
+  // //     const amount = new BN(10); // Withdraw all fees
+  // //     const tx = await program.methods
+  // //       .withdrawFees(amount)
+  // //       .accountsPartial({
+  // //         admin: admin.publicKey,
+  // //         mintUsdc: mintUsdc,
+  // //         metaverfAccount: metaverfAccount,
+  // //         treasury: treasury,
+  // //         adminTokenAccount,
+  // //         tokenProgram: tokenProgram,
+  // //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  // //         systemProgram: SystemProgram.programId,
+  // //       })
+  // //       .signers([admin])
+  // //       .rpc()
+  // //       .then(confirm)
+  // //       .then(log);
+
+  // //     console.log("Withdraw success:", tx);
+  // //   } catch (error) {
+  // //     console.log(error);
+  // //   }
+  // // });
+
+  // it("Add collection1 to college", async () => {
+  //   try {
+  //     const collegeId = 1;
+
+  //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  //       program.programId
+  //     );
+
+  //     // Create a new collection
+  //     collection1 = Keypair.generate();
+
+  //     const args = {
+  //       name: "TEST COLLECTION",
+  //       uri: "https://example.com/event",
+  //     };
+
+  //     const tx = await program.methods
+  //       .addCollection(collegeId, args)
+  //       .accountsStrict({
+  //         collegeAccount: collegeAccount,
+  //         collegeAuthority: collegeAuthority.publicKey,
+  //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  //         newCollection: collection1.publicKey,
+  //         systemProgram: SystemProgram.programId,
+  //       })
+  //       .signers([collegeAuthority, collection1])
+  //       .rpc({ skipPreflight: true }) // Add skipPreflight for diagnostics
+  //       .catch(error => {
+  //         if (error instanceof anchor.web3.SendTransactionError) {
+  //           console.log("Detailed error:", error.logs);
+  //         }
+  //         throw error;
+  //       })
+  //       .then(confirm)
+  //       .then(log);
+        
+  //     console.log(`Add collection to college signature:`, tx);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
+
+  // // it("Add collection2 to college", async () => {
+  // //   try {
+  // //     const collegeId = 1;
+
+  // //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  // //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  // //       program.programId
+  // //     );
+
+  // //     // Create a new collection
+  // //     collection2 = Keypair.generate();
+
+  // //     const args = {
+  // //       name: "TEST COLLECTION",
+  // //       uri: "https://example.com/event",
+  // //     };
+
+  // //     const tx = await program.methods
+  // //       .addCollection(collegeId, args)
+  // //       .accountsStrict({
+  // //         collegeAccount: collegeAccount,
+  // //         collegeAuthority: collegeAuthority.publicKey,
+  // //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  // //         newCollection: collection2.publicKey,
+  // //         systemProgram: SystemProgram.programId,
+  // //       })
+  // //       .signers([collegeAuthority, collection2])
+  // //       .rpc({ skipPreflight: true }) // Add skipPreflight for diagnostics
+  // //       .catch(error => {
+  // //         if (error instanceof anchor.web3.SendTransactionError) {
+  // //           console.log("Detailed error:", error.logs);
+  // //         }
+  // //         throw error;
+  // //       })
+  // //       .then(confirm)
+  // //       .then(log);
+        
+  // //     console.log(`Add collection to college signature:`, tx);
+  // //   } catch (error) {
+  // //     console.log(error);
+  // //   }
+  // // });
+
+  // it("Minting Certificates for Student1 under collection1", async () => {
+  //   try {
+  //     const collegeId = 1;
+
+  //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  //       program.programId
+  //     );
+
+  //     // Generate unique certificate data
+  //     const args = {
+  //       name: "TEST ASSET",
+  //       uri: "https://example.com/event",
+  //       studentName: "STUDENT NAME",
+  //       courseName: "Turbine",
+  //       completionDate: "15 feb",
+  //       grade: "1st year",
+  //     };
+
+  //     // Debug information for verification
+  //     // console.log("Collection public key:", collection.publicKey.toBase58());
+  //     // console.log("Asset public key:", asset.publicKey.toBase58());
+  //     // console.log("Student wallet public key:", studentWallet.publicKey.toBase58());
+
+  //     const tx = await program.methods
+  //       .mintCertificate(collegeId, args)
+  //       .accountsStrict({
+  //         collegeAccount: collegeAccount,
+  //         collegeAuthority: collegeAuthority.publicKey,
+  //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  //         collection: collection1.publicKey,
+  //         systemProgram: SystemProgram.programId,
+  //         asset: asset1.publicKey,
+  //         studentWallet: studentWallet1.publicKey,
+  //       })
+  //       .signers([collegeAuthority, asset1, studentWallet1])
+  //       .rpc({ skipPreflight: true })
+  //       .catch(error => {
+  //         if (error instanceof anchor.web3.SendTransactionError) {
+  //           console.log("Detailed error logs:", error.logs);
+  // // Try to read any program-generated errors
+  // const programErrors = error.logs?.filter(log => 
+  //   log.includes("Program log:") && log.includes("Error")
+  // );
+  // if (programErrors?.length) console.log("Program errors:", programErrors);
+  //         }
+  //         throw error;
+  //       })
+  //       .then(confirm)
+  //       .then(log);
+        
+  //     console.log(`Add asset to college signature:`, tx);
+  //   } catch (error) {
+  //     console.log("Failed to mint certificate:", error);
+  //   }
+  // });
+
+  // it("Minting Certificates for Student2 under Collection1", async () => {
+  //   try {
+  //     const collegeId = 1;
+
+  //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  //       program.programId
+  //     );
+
+  //     // Generate unique certificate data
+  //     const args = {
+  //       name: "TEST ASSET",
+  //       uri: "https://example.com/event",
+  //       studentName: "raunit",
+  //       courseName: "Turbine",
+  //       completionDate: "15 feb",
+  //       grade: "1st year",
+  //     };
+
+  //     // Debug information for verification
+  //     // console.log("Collection public key:", collection.publicKey.toBase58());
+  //     // console.log("Asset public key:", asset.publicKey.toBase58());
+  //     // console.log("Student wallet public key:", studentWallet.publicKey.toBase58());
+
+  //     const tx = await program.methods
+  //       .mintCertificate(collegeId, args)
+  //       .accountsStrict({
+  //         collegeAccount: collegeAccount,
+  //         collegeAuthority: collegeAuthority.publicKey,
+  //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  //         collection: collection1.publicKey,
+  //         systemProgram: SystemProgram.programId,
+  //         asset: asset2.publicKey,
+  //         studentWallet: studentWallet2.publicKey,
+  //       })
+  //       .signers([collegeAuthority, asset2, studentWallet2])
+  //       .rpc({ skipPreflight: true })
+  //       .catch(error => {
+  //         if (error instanceof anchor.web3.SendTransactionError) {
+  //           console.log("Detailed error logs:", error.logs);
+  // // Try to read any program-generated errors
+  // const programErrors = error.logs?.filter(log => 
+  //   log.includes("Program log:") && log.includes("Error")
+  // );
+  // if (programErrors?.length) console.log("Program errors:", programErrors);
+  //         }
+  //         throw error;
+  //       })
+  //       .then(confirm)
+  //       .then(log);
+        
+  //     console.log(`Add asset to college signature:`, tx);
+  //   } catch (error) {
+  //     console.log("Failed to mint certificate:", error);
+  //   }
+  // });
+
+
+  // it("Minting Certificates for Student3 under collection1", async () => {
+  //   try {
+  //     const collegeId = 1;
+
+  //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  //       program.programId
+  //     );
+
+  //     // Generate unique certificate data
+  //     const args = {
+  //       name: "TEST ASSET",
+  //       uri: "https://example.com/event",
+  //       studentName: "raunit",
+  //       courseName: "Turbine",
+  //       completionDate: "15 feb",
+  //       grade: "1st year",
+  //     };
+
+  //     // Debug information for verification
+  //     // console.log("Collection public key:", collection.publicKey.toBase58());
+  //     // console.log("Asset public key:", asset.publicKey.toBase58());
+  //     // console.log("Student wallet public key:", studentWallet.publicKey.toBase58());
+
+  //     const tx = await program.methods
+  //       .mintCertificate(collegeId, args)
+  //       .accountsStrict({
+  //         collegeAccount: collegeAccount,
+  //         collegeAuthority: collegeAuthority.publicKey,
+  //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  //         collection: collection1.publicKey,
+  //         systemProgram: SystemProgram.programId,
+  //         asset: asset3.publicKey,
+  //         studentWallet: studentWallet3.publicKey,
+  //       })
+  //       .signers([collegeAuthority, asset3, studentWallet3])
+  //       .rpc({ skipPreflight: true })
+  //       .catch(error => {
+  //         if (error instanceof anchor.web3.SendTransactionError) {
+  //           console.log("Detailed error logs:", error.logs);
+  // // Try to read any program-generated errors
+  // const programErrors = error.logs?.filter(log => 
+  //   log.includes("Program log:") && log.includes("Error")
+  // );
+  // if (programErrors?.length) console.log("Program errors:", programErrors);
+  //         }
+  //         throw error;
+  //       })
+  //       .then(confirm)
+  //       .then(log);
+        
+  //     console.log(`Add asset to college signature:`, tx);
+  //   } catch (error) {
+  //     console.log("Failed to mint certificate:", error);
+  //   }
+  // });
+
+
+  // // it("Withdraw Fees 2nd time", async () => {
+  // //   try {
+  // //     const amount = new BN(10); // Withdraw all fees
+  // //     const tx = await program.methods
+  // //       .withdrawFees(amount)
+  // //       .accountsPartial({
+  // //         admin: admin.publicKey,
+  // //         mintUsdc: mintUsdc,
+  // //         metaverfAccount: metaverfAccount,
+  // //         treasury: treasury,
+  // //         adminTokenAccount,
+  // //         tokenProgram: tokenProgram,
+  // //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  // //         systemProgram: SystemProgram.programId,
+  // //       })
+  // //       .signers([admin])
+  // //       .rpc()
+  // //       .then(confirm)
+  // //       .then(log);
+
+  // //     console.log("Withdraw success:", tx);
+  // //   } catch (error) {
+  // //     console.log(error);
+  // //   }
+  // // });
+
+  // // it("Minting Certificates for Student1 under collection2", async () => {
+  // //   try {
+  // //     const collegeId = 1;
+
+  // //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  // //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  // //       program.programId
+  // //     );
+
+  // //     // Generate unique certificate data
+  // //     const args = {
+  // //       name: "TEST ASSET",
+  // //       uri: "https://example.com/event",
+  // //       studentName: "STUDENT NAME",
+  // //       courseName: "Turbine",
+  // //       completionDate: "15 feb",
+  // //       grade: "1st year",
+  // //     };
+
+  // //     // Debug information for verification
+  // //     // console.log("Collection public key:", collection.publicKey.toBase58());
+  // //     // console.log("Asset public key:", asset.publicKey.toBase58());
+  // //     // console.log("Student wallet public key:", studentWallet.publicKey.toBase58());
+
+  // //     const tx = await program.methods
+  // //       .mintCertificate(collegeId, args)
+  // //       .accountsStrict({
+  // //         collegeAccount: collegeAccount,
+  // //         collegeAuthority: collegeAuthority.publicKey,
+  // //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  // //         collection: collection2.publicKey,
+  // //         systemProgram: SystemProgram.programId,
+  // //         asset: asset1.publicKey,
+  // //         studentWallet: studentWallet1.publicKey,
+  // //       })
+  // //       .signers([collegeAuthority, asset1, studentWallet1])
+  // //       .rpc({ skipPreflight: true })
+  // //       .catch(error => {
+  // //         if (error instanceof anchor.web3.SendTransactionError) {
+  // //           console.log("Detailed error logs:", error.logs);
+  // // // Try to read any program-generated errors
+  // // const programErrors = error.logs?.filter(log => 
+  // //   log.includes("Program log:") && log.includes("Error")
+  // // );
+  // // if (programErrors?.length) console.log("Program errors:", programErrors);
+  // //         }
+  // //         throw error;
+  // //       })
+  // //       .then(confirm)
+  // //       .then(log);
+        
+  // //     console.log(`Add asset to college signature:`, tx);
+  // //   } catch (error) {
+  // //     console.log("Failed to mint certificate:", error);
+  // //   }
+  // // });
+
+  // // it("Minting Certificates for Student2 under Collection2", async () => {
+  // //   try {
+  // //     const collegeId = 1;
+
+  // //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  // //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  // //       program.programId
+  // //     );
+
+  // //     // Generate unique certificate data
+  // //     const args = {
+  // //       name: "TEST ASSET",
+  // //       uri: "https://example.com/event",
+  // //       studentName: "raunit",
+  // //       courseName: "Turbine",
+  // //       completionDate: "15 feb",
+  // //       grade: "1st year",
+  // //     };
+
+  // //     // Debug information for verification
+  // //     // console.log("Collection public key:", collection.publicKey.toBase58());
+  // //     // console.log("Asset public key:", asset.publicKey.toBase58());
+  // //     // console.log("Student wallet public key:", studentWallet.publicKey.toBase58());
+
+  // //     const tx = await program.methods
+  // //       .mintCertificate(collegeId, args)
+  // //       .accountsStrict({
+  // //         collegeAccount: collegeAccount,
+  // //         collegeAuthority: collegeAuthority.publicKey,
+  // //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  // //         collection: collection2.publicKey,
+  // //         systemProgram: SystemProgram.programId,
+  // //         asset: asset2.publicKey,
+  // //         studentWallet: studentWallet2.publicKey,
+  // //       })
+  // //       .signers([collegeAuthority, asset2, studentWallet2])
+  // //       .rpc({ skipPreflight: true })
+  // //       .catch(error => {
+  // //         if (error instanceof anchor.web3.SendTransactionError) {
+  // //           console.log("Detailed error logs:", error.logs);
+  // // // Try to read any program-generated errors
+  // // const programErrors = error.logs?.filter(log => 
+  // //   log.includes("Program log:") && log.includes("Error")
+  // // );
+  // // if (programErrors?.length) console.log("Program errors:", programErrors);
+  // //         }
+  // //         throw error;
+  // //       })
+  // //       .then(confirm)
+  // //       .then(log);
+        
+  // //     console.log(`Add asset to college signature:`, tx);
+  // //   } catch (error) {
+  // //     console.log("Failed to mint certificate:", error);
+  // //   }
+  // // });
+
+
+  // // it("Minting Certificates for Student3 under Collection2", async () => {
+  // //   try {
+  // //     const collegeId = 1;
+
+  // //     const [collegeAccount] = PublicKey.findProgramAddressSync(
+  // //       [Buffer.from("college"), new Uint8Array([collegeId, 0])],
+  // //       program.programId
+  // //     );
+
+  // //     // Generate unique certificate data
+  // //     const args = {
+  // //       name: "TEST ASSET",
+  // //       uri: "https://example.com/event",
+  // //       studentName: "raunit",
+  // //       courseName: "Turbine",
+  // //       completionDate: "15 feb",
+  // //       grade: "1st year",
+  // //     };
+
+  // //     // Debug information for verification
+  // //     // console.log("Collection public key:", collection.publicKey.toBase58());
+  // //     // console.log("Asset public key:", asset.publicKey.toBase58());
+  // //     // console.log("Student wallet public key:", studentWallet.publicKey.toBase58());
+
+  // //     const tx = await program.methods
+  // //       .mintCertificate(collegeId, args)
+  // //       .accountsStrict({
+  // //         collegeAccount: collegeAccount,
+  // //         collegeAuthority: collegeAuthority.publicKey,
+  // //         mplCoreProgram: MPL_CORE_PROGRAM_ID,
+  // //         collection: collection2.publicKey,
+  // //         systemProgram: SystemProgram.programId,
+  // //         asset: asset3.publicKey,
+  // //         studentWallet: studentWallet3.publicKey,
+  // //       })
+  // //       .signers([collegeAuthority, asset3, studentWallet3])
+  // //       .rpc({ skipPreflight: true })
+  // //       .catch(error => {
+  // //         if (error instanceof anchor.web3.SendTransactionError) {
+  // //           console.log("Detailed error logs:", error.logs);
+  // // // Try to read any program-generated errors
+  // // const programErrors = error.logs?.filter(log => 
+  // //   log.includes("Program log:") && log.includes("Error")
+  // // );
+  // // if (programErrors?.length) console.log("Program errors:", programErrors);
+  // //         }
+  // //         throw error;
+  // //       })
+  // //       .then(confirm)
+  // //       .then(log);
+        
+  // //     console.log(`Add asset to college signature:`, tx);
+  // //   } catch (error) {
+  // //     console.log("Failed to mint certificate:", error);
+  // //   }
+  // // });
+
+
+  // it("Update Parameters 2nd time", async () => {
+  //   try {
+  //     const newAnnualFee = new BN(2e6);
+  //     const newSubscriptionDuration = new BN(2e6);
+  //     const tx = await program.methods
+  //       .updateParameters(newAnnualFee, newSubscriptionDuration)
+  //       .accountsPartial({
+  //         admin: admin.publicKey,
+  //         metaverfAccount: metaverfAccount,
+  //       })
+  //       .signers([admin])
+  //       .rpc()
+  //       .then(confirm)
+  //       .then(log);
+
+  //     console.log("Update Parameters signature:", tx);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
+
+  // it("Withdraw Fees last time", async () => {
+  //   try {
+  //     const amount = new BN(10); // Withdraw all fees
+  //     const tx = await program.methods
+  //       .withdrawFees(amount)
+  //       .accountsPartial({
+  //         admin: admin.publicKey,
+  //         mintUsdc: mintUsdc,
+  //         metaverfAccount: metaverfAccount,
+  //         treasury: treasury,
+  //         adminTokenAccount,
+  //         tokenProgram: tokenProgram,
+  //         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
+  //         systemProgram: SystemProgram.programId,
+  //       })
+  //       .signers([admin])
+  //       .rpc()
+  //       .then(confirm)
+  //       .then(log);
+
+  //     console.log("Withdraw success:", tx);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
+
+
+
 });
