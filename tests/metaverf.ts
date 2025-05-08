@@ -853,7 +853,7 @@ describe("metaverf", () => {
 
 
 
-
+//TODO PARAMETERS ARE NOT CHANGED ITS AN HECTIC TASK probably will use AI
 
   // it("Register College", async () => {
   //   try {
