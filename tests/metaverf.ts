@@ -113,6 +113,8 @@ describe("metaverf", () => {
     );
     await provider.sendAndConfirm(studentTransaction1);
 
+    //
+
     studentWallet2 = anchor.web3.Keypair.generate();
     const studentTransaction2 = new anchor.web3.Transaction().add(
       anchor.web3.SystemProgram.transfer({
