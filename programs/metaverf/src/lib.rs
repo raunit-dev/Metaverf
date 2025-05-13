@@ -9,7 +9,7 @@ pub use constants::*;
 pub use instructions::*;
 pub use state::*;
 
-declare_id!("EaWRVXxw9uKq5ydVwqLYdmfY3gzSdRCqumRHrCFet5Rz");
+declare_id!("C5wcse5xEf1XNtivNWozSM81ebdcFx7gYwiJUS5XUKp2");
 
 // #[derive(AnchorSerialize, AnchorDeserialize)]
 // pub struct CertificateArgs {

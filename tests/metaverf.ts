@@ -30,7 +30,7 @@ describe("metaverf", () => {
   const umi = createUmi("http://api.devenet.solana.com").use(mplCore());
 
   // Constants
-  const annualFee = new BN(1e6);
+  const annualFee = new BN(1e4);
   const subscriptionDuration = new BN(1e6);
   // Changed to 1 college only
   const totalColleges = 1;
@@ -87,7 +87,7 @@ describe("metaverf", () => {
     const transferIx = SystemProgram.transfer({
       fromPubkey: provider.publicKey,
       toPubkey: admin.publicKey,
-      lamports: 10 * LAMPORTS_PER_SOL,
+      lamports: 0.001 * LAMPORTS_PER_SOL,
     });
     const tx = new Transaction().add(transferIx);
     await provider.sendAndConfirm(tx);
@@ -97,7 +97,7 @@ describe("metaverf", () => {
     const authorityTransferIx = SystemProgram.transfer({
       fromPubkey: provider.publicKey,
       toPubkey: collegeAuthority.publicKey,
-      lamports: 10 * LAMPORTS_PER_SOL,
+      lamports: 0.001 * LAMPORTS_PER_SOL,
     });
     const authorityTx = new Transaction().add(authorityTransferIx);
     await provider.sendAndConfirm(authorityTx);
@@ -108,7 +108,7 @@ describe("metaverf", () => {
       anchor.web3.SystemProgram.transfer({
         fromPubkey: provider.publicKey,
         toPubkey: studentWallet1.publicKey,
-        lamports: 40000000,
+        lamports: 0.001 * LAMPORTS_PER_SOL,
       })
     );
     await provider.sendAndConfirm(studentTransaction1);
@@ -120,7 +120,7 @@ describe("metaverf", () => {
       anchor.web3.SystemProgram.transfer({
         fromPubkey: provider.publicKey,
         toPubkey: studentWallet2.publicKey,
-        lamports: 40000000,
+        lamports: 0.001 * LAMPORTS_PER_SOL,
       })
     );
     await provider.sendAndConfirm(studentTransaction2);
@@ -130,7 +130,7 @@ describe("metaverf", () => {
       anchor.web3.SystemProgram.transfer({
         fromPubkey: provider.publicKey,
         toPubkey: studentWallet3.publicKey,
-        lamports: 40000000,
+        lamports: 0.001 * LAMPORTS_PER_SOL,
       })
     );
     await provider.sendAndConfirm(studentTransaction3);
