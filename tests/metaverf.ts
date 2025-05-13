@@ -201,7 +201,7 @@ describe("metaverf", () => {
       mintUsdc,
       payerTokenAccount,
       admin,
-      1000000000
+      1000000
     );
 
     // Mint USDC to admin
@@ -211,7 +211,7 @@ describe("metaverf", () => {
       mintUsdc,
       adminTokenAccount,
       admin,
-      1000000000
+      1000000
     );
   });
 
