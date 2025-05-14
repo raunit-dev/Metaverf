@@ -358,7 +358,7 @@ describe("metaverf", () => {
 
       // Create a new collection
       collection1 = Keypair.generate();
-
+      console.log(collection1);
       const args = {
         name: "TEST COLLECTION",
         uri: "https://example.com/event",
